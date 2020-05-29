@@ -1,0 +1,49 @@
+trainingInput:
+  hyperparameters:
+    goal: MINIMIZE
+    maxTrials: 50
+    maxParallelTrials: 2
+    hyperparameterMetricTag: val_mse #mean_squared_error
+    params:
+    - parameterName: train-batch-size
+      type: INTEGER
+      minValue: 8
+      maxValue: 256
+      scaleType: UNIT_LINEAR_SCALE
+    - parameterName: learning-rate
+      type: DOUBLE
+      minValue: 0.001
+      maxValue: 0.05
+      scaleType: UNIT_LOG_SCALE
+    - parameterName: num-deep-layers
+      type: DISCRETE
+      discreteValues:
+          - 1
+          - 2
+          - 3
+          - 4
+    - parameterName: first-deep-layer-size
+      type: DISCRETE
+      discreteValues:
+          - 20
+          - 30
+          - 40
+          - 50
+    - parameterName: first-wide-layer-size
+      type: INTEGER
+      minValue: 700
+      maxValue: 5000
+      scaleType: UNIT_LINEAR_SCALE
+    - parameterName: wide-scale-factor
+      type: DOUBLE
+      minValue: 0.01
+      maxValue: 0.5
+      scaleType: UNIT_LOG_SCALE
+    - parameterName: dropout-rate
+      type: DISCRETE
+      discreteValues:
+          - 0.1
+          - 0.2
+          - 0.3
+          - 0.4
+          - 0.5
