@@ -10,6 +10,7 @@ import logging
 import numpy as np
 import pandas as pd
 import pandas_gbq
+
 import tensorflow as tf
 
 from tensorflow.python.saved_model import builder as saved_model_builder
@@ -24,19 +25,22 @@ LABEL_COLUMN = 'log_trip_seconds'
 
 CAT_COLUMNS = ['weekday','pickup_census_tract','dropoff_census_tract','pickup_community_area','dropoff_community_area']
 
+import config
+PROJECT_ID=config.PROJECT_ID
+
 # generate a dictionary with unique values for each of the categorical features
 cat_values = {}
 for cat in CAT_COLUMNS:
-    SQL = 'SELECT DISTINCT {} AS cat_feature FROM `mwpmltr.chicago_taxi.train_results`'.format(cat)
-    df = pandas_gbq.read_gbq(SQL, project_id='mwpmltr')
+    SQL = 'SELECT DISTINCT {} AS cat_feature FROM `{}.chicago_taxi.train_results`'.format(cat, PROJECT_ID)
+    df = pandas_gbq.read_gbq(SQL, project_id=PROJECT_ID)
     all_categorical_training = sorted(df['cat_feature'].tolist())
     cat_values[cat] = all_categorical_training
 
 
 def returnUniqueCount(feature):
   """Returns the ount of distinct values for a given feature"""
-  SQL = 'SELECT COUNT(DISTINCT {}) AS unique_count FROM `mwpmltr.chicago_taxi.train_results`'.format(feature)
-  df = pandas_gbq.read_gbq(SQL, project_id='mwpmltr')
+  SQL = 'SELECT COUNT(DISTINCT {}) AS unique_count FROM `{}.chicago_taxi.train_results`'.format(feature, PROJECT_ID)
+  df = pandas_gbq.read_gbq(SQL, project_id=PROJECT_ID)
     
   return df['unique_count'][0]
 

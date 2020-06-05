@@ -32,9 +32,13 @@ def train_and_evaluate(args):
       
     logging.info('End creating datasets')
 
+  # Create config file and store project id there so that model.py can read it.
+  with open('config.py', 'w') as f:
+    f.write("PROJECT_ID=\"{}\"".format(args.project_id))
+    
   # import after datasets are created as they are referenced immediately when this module is initiated
-  import trainer.model as model
-
+  import trainer.model as model 
+  
   # if new datasets are created, scaler also need to be created
   if args.create_data == True:
     import trainer.create_scaler_func as create_scaler_func
@@ -128,22 +132,22 @@ if __name__ == '__main__':
       '--train-files',
       nargs='+',
       help='Training file local or GCS',
-      default=['gs://ross-keras/data/full_train_results.csv'])
+      default=['gs://sanofi-ml-workshop-chicago-taxi-demo/data/full_train_results.csv'])
   parser.add_argument(
       '--eval-files',
       nargs='+',
       help='Evaluation file local or GCS',
-      default=['gs://ross-keras/data/full_val_results.csv'])
+      default=['gs://sanofi-ml-workshop-chicago-taxi-demo/data/full_val_results.csv'])
   parser.add_argument(
       '--test-files',
       nargs='+',
       help='Test file local or GCS',
-      default=['gs://ross-keras/data/full_test_results.csv'])
+      default=['gs://sanofi-ml-workshop-chicago-taxi-demo/data/full_test_results.csv'])
   parser.add_argument(
       '--job-dir',
       type=str,
       help='GCS or local dir to write checkpoints and export model',
-      default='gs://ross-keras/keras-job-dir')
+      default='gs://sanofi-ml-workshop-chicago-taxi-demo/keras-job-dir')
   parser.add_argument(
       '--train-steps',
       type=int,
@@ -231,12 +235,12 @@ if __name__ == '__main__':
   parser.add_argument(
     '--project-id',
     type=str,
-    default='mwpmltr',
+    default='mwe-sanofi-ml-workshop',
     help='The GCP Project ID')
   parser.add_argument(
     '--bucket-name',
     type=str,
-    default='ross-keras',
+    default='sanofi-ml-workshop-chicago-taxi-demo',
     help='The Cloud Storage bucket to be used for process artifacts')
   parser.add_argument(
     '--dataset-id',
