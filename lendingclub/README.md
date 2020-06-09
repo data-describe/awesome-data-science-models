@@ -1,12 +1,12 @@
 # Goal
 
-The lending club example is an XGboost model used to demonstrate Google Cloud Platform's CloudML hypertune feature which is used to tune the model's parameters. The lending club model itself is a binary classification model which predicts those customers who have a high likelihood of defaulting on loans given a list of their personal and credit report attributes. XGboost has several tunable parameters. In this example we explore only three of them: max_depth, num_boost_round, and booster. You can pick any of the parameters however and select a range of values to search over to find the optimal combination to maximize a supplied metric.
+The lending club example is an XGboost model used to demonstrate Google Cloud Platform's CloudML hypertune feature which is used to tune the model's parameters. The lending club model itself is a binary classification model which predicts those customers who have a high likelihood of defaulting on loans given a list of their personal and credit report attributes. XGboost has several tunable parameters. In this example we explore only three of them: max_depth, num_boost_round, and booster. You can pick any of the parameters; however, and select a range of values to search over to find the optimal combination to maximize a supplied metric.
 
 # Directions
 
 Use this notebook: "/sanofi-ml-workshop-repo/lendingclub/answers/LendingClub_xgboost.ipynb". It is set to run each cell one at a time.
 
-Set environment variables in first cell if necessary in the first cell.
+Set environment variables in first cell if necessary.
 
 Part 1 of the notebook creates a python code file which builds an XGboost model. For the parser arguments, the three chosen parameters are set. You can change these to experiment with different ones from the list of parameters for XGboost.
 
