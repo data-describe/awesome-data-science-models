@@ -171,11 +171,11 @@ def create_data_func(project_id, bucket_name, dataset_id):
     ,IFNULL(Product_Category_1,0) AS Product_Category_1
     ,IFNULL(Product_Category_2,0) AS Product_Category_2
     ,IFNULL(Product_Category_3,0) AS Product_Category_3
-    FROM `mwe-sanofi-ml-workshop.black_friday.full_dataset_raw` 
+    FROM `{}.{}.full_dataset_raw` 
     """
 
-    train_sql = sql + "WHERE MOD(User_ID, 5) != 0 -- 80% to train"
-    test_sql = sql + "WHERE MOD(User_ID, 5) = 0 -- 20% to test"
+    train_sql = sql.format(project_id, dataset_id) + "WHERE MOD(User_ID, 5) != 0 -- 80% to train"
+    test_sql = sql.format(project_id, dataset_id) + "WHERE MOD(User_ID, 5) = 0 -- 20% to test"
 
     train_df = pandas_gbq.read_gbq(train_sql, project_id=project_id)
     test_df = pandas_gbq.read_gbq(test_sql, project_id=project_id)
