@@ -8,8 +8,9 @@ import random
 
 from trainer import model
 
-PROJECT_ID = 'mwpmltr'
-BUCKET_NAME = 'ross-keras'
+import config
+PROJECT_ID=config.PROJECT_ID
+BUCKET_NAME=config.BUCKET_NAME
 
 class NumpyEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -21,15 +22,15 @@ if __name__=='__main__':
       # download the scaler
     if not path.exists('x_scaler'):
         print('Downloading scaler')
-        storage_client = storage.Client(project='mwpmltr')
-        bucket = storage_client.get_bucket('ross-keras')
+        storage_client = storage.Client(project=PROJECT_ID)
+        bucket = storage_client.get_bucket(BUCKET_NAME)
         blob = bucket.blob('scalers/x_scaler')
         blob.download_to_filename('x_scaler')
         print('Downloaded scaler')
 
     x_scaler = joblib.load('x_scaler')
 
-    gen = model.generator_input(['gs://ross-keras/data/full_test_results.csv'], chunk_size=5000, project_id=PROJECT_ID, bucket_name=BUCKET_NAME, x_scaler=x_scaler, batch_size=1)
+    gen = model.generator_input(['gs://{}/data/full_test_results.csv'.format(BUCKET_NAME)], chunk_size=5000, project_id=PROJECT_ID, bucket_name=BUCKET_NAME, x_scaler=x_scaler, batch_size=1)
     
 
     for i in range(1, random.randint(1,100)):

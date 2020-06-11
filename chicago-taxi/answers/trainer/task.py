@@ -35,6 +35,7 @@ def train_and_evaluate(args):
   # Create config file and store project id there so that model.py can read it.
   with open('config.py', 'w') as f:
     f.write("PROJECT_ID=\"{}\"".format(args.project_id))
+    f.write("BUCKET_NAME=\"{}\"".format(args.bucket_name))
     
   # import after datasets are created as they are referenced immediately when this module is initiated
   import trainer.model as model 

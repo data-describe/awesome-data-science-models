@@ -54,15 +54,15 @@ if __name__=='__main__':
     # download the scaler
     if not path.exists('x_scaler'):
         print('Downloading scaler')
-        storage_client = storage.Client(project='mwpmltr')
-        bucket = storage_client.get_bucket('ross-keras')
+        storage_client = storage.Client(project=args.project_id)
+        bucket = storage_client.get_bucket(args.bucket_name)
         blob = bucket.blob('scalers/x_scaler')
         blob.download_to_filename('x_scaler')
         print('Downloaded scaler')
 
     x_scaler = joblib.load('x_scaler')
 
-    gen = model.generator_input(['gs://ross-keras/data/full_test_results.csv'], chunk_size=5000, project_id=args.project_id, bucket_name=args.bucket_name, x_scaler=x_scaler, batch_size=1)
+    gen = model.generator_input(['gs://{}/data/full_test_results.csv'.format(args.bucket_name)], chunk_size=5000, project_id=args.project_id, bucket_name=args.bucket_name, x_scaler=x_scaler, batch_size=1)
     
     actuals = []
     preds = []
