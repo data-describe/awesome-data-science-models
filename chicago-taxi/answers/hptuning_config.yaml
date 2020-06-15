@@ -1,8 +1,8 @@
 trainingInput:
   hyperparameters:
     goal: MINIMIZE
-    maxTrials: 50
-    maxParallelTrials: 2
+    maxTrials: 1
+    maxParallelTrials: 1
     hyperparameterMetricTag: val_mse #mean_squared_error
     params:
     - parameterName: train-batch-size
