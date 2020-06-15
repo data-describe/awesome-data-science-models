@@ -174,9 +174,13 @@ def create_data_func(project_id, bucket_name, dataset_id):
     FROM `{}.{}.full_dataset_raw` 
     """
 
-    train_sql = sql.format(project_id, dataset_id) + "WHERE MOD(User_ID, 5) != 0 -- 80% to train"
+    train_sql = sql.format(project_id, dataset_id) + "WHERE MOD(User_ID, 5) != 0 -- 80% to train "
     test_sql = sql.format(project_id, dataset_id) + "WHERE MOD(User_ID, 5) = 0 -- 20% to test"
 
+    # Limit data size for demo purposes.
+    train_sql += "\nLIMIT 1000"
+    test_sql += "\nLIMIT 1000"    
+    
     train_df = pandas_gbq.read_gbq(train_sql, project_id=project_id)
     test_df = pandas_gbq.read_gbq(test_sql, project_id=project_id)
 

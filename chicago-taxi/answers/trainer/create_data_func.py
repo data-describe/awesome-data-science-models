@@ -46,7 +46,7 @@ def create_data_func(data_part, project_id, bucket_name, dataset_id):
         sql += "AND MOD(FARM_FINGERPRINT(unique_key), 5) = 0\nAND MOD(FARM_FINGERPRINT(unique_key), 10) != 0 -- 10% val"
     elif data_part == 'test':
         sql += "AND MOD(FARM_FINGERPRINT(unique_key), 5) = 0\nAND MOD(FARM_FINGERPRINT(unique_key), 10) = 0 -- 10% test"
-
+    sql += "\nLIMIT 1000"
     # Start the query, passing in the extra configuration.
     query_job = client.query(
       sql,
