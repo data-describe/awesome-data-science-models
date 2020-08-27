@@ -5,35 +5,29 @@ The census income example is a logistic regression model used to demonstrate Goo
 The objective of the model itself is to predict if a said person, given their attributes, earns more than $50k per annum or not.
 
 ## Running Instructions
-Instructions for running the process are outlined in AI Platform.ipynb.
+Instructions for running the process are outlined in Census_Income.ipynb.
 
 ## Files
 ```
 ├── census-income
 │   ├── answers
-│   │   ├── AI Platform.ipynb
+│   │   ├── Census_Income.ipynb
 │   │   └── trainer
 │   │       ├── __init__.py
 │   │       └── task.py
-│   ├── exercises
-│   │   └── README.md
-│   ├── notebooks
-│   │   └── EDA_Census_Data.ipynb
+│   ├── EDA
+│   │   └── Census_Income_EDA.ipynb
 │   └── README.md
 ```
 
-**AI Platform.ipynb**
+**answers/Census_Income.ipynb**
 <br>
 All of the commands necessary to tune, train, and host the model on AI Platform. This is a step-by-step notebook with explicit instructions on how to carry out the tasks outlined in the "Goals" section above.
 
-**requirements.txt**
-<br>
-Packages required in order to complete the training in local execution mode.
-
-**trainer/task.py**
+**answers/trainer/task.py**
 <br>
 Main module responsible for accepting input parameters and executing the training job.
 
-**notebooks/EDA_Census_Data.ipynb**
+**EDA/Census_Income_EDA.ipynb**
 <br>
 Notebook which runs an Exploratory Data Analysis on the dataset.
