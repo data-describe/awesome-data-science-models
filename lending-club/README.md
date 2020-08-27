@@ -19,7 +19,7 @@ Instructions for running the process are outlined in Lending_Club.ipynb.
 │   └── README.md
 ```
 
-**answers/AI Platform.ipynb**
+**answers/Lending_Club.ipynb**
 <br>
 All of the commands necessary to tune, train, and host the model on AI Platform. This is a step-by-step notebook with explicit instructions on how to carry out the tasks outlined in the "Goals" section above.
 
