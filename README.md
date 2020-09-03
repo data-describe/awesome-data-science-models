@@ -1,3 +1,4 @@
+
 # Awesome Data Science Models
 
 The goal of these projects is to provide tutorials (and answers) of our most popular models we use for training.
@@ -15,6 +16,7 @@ They all use [data⎰describe](https://github.com/data-describe/data-describe) o
 | 203 | Black Friday | Recommending product categories   with multi-class categorization in AI Platform with custom prediction   routines, custom hyperparamert tuning | Data Scientists, Data Engineers |
 | 302 | Cellular Imaging | Recusion Cellular Image   Clasification with AI-Platform with TF2, TPU, and advanced Engineering | Data Scientists, Data Engineers,   HCLS |
 | 401 | IOT Signal processing  | Processing Streaming data with   signal windowing and live prediction using AI Platform and GCP | MLOps, Advanced Data Scientists |
+
 
 
 
