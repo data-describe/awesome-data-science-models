@@ -30,6 +30,8 @@ This dataset is a BigQuery public dataset, and can be found [here](https://conso
 ## Lending Club
 This dataset is made public by LendingClub, and can be found at their website or [here](https://www.kaggle.com/wordsforthewise/lending-club). The dataset used for this demo is a subset of the original dataset.
 
+## Cellular Image
+This data is part of the tensorflow datasets. We have copied this data into a public bucket for the demo [here](https://console.cloud.google.com/storage/browser/temp_data_bukcet).
 
 
 
