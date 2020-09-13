@@ -17,17 +17,48 @@ They all use [data⎰describe](https://github.com/data-describe/data-describe) o
 | 401 | IOT Signal processing  | Processing Streaming data with   signal windowing and live prediction using AI Platform and GCP | MLOps, Advanced Data Scientists |
 
 
-## Black Friday
-This dataset is on Kaggle, and can be found [here](https://www.kaggle.com/sdolezel/black-friday).
+## install instructions
 
-## Census Income
-This dataset is on the UCI Machine Learning Repository, and can be found [here](https://archive.ics.uci.edu/ml/datasets/census+income).
+These examples are meant to run on GCP AI Platform. They may very well run elsewhere but we haven't tested.
 
-## Chicago Taxi
-This dataset is a BigQuery public dataset, and can be found [here](https://console.cloud.google.com/marketplace/product/city-of-chicago-public-data/chicago-taxi-trips?filter=solution-type:dataset&id=13c38348-0610-4185-a8f7-b5add142fcbe&project=mwpmltr&folder=&organizationId=). More information on BigQuery public datasets can be found [here](https://cloud.google.com/bigquery/public-data).
 
-## Lending Club
-This dataset is made public by LendingClub, and can be found at their website or [here](https://www.kaggle.com/wordsforthewise/lending-club). The dataset used for this demo is a subset of the original dataset.
+Create an instance for AI Platform notebooks:
 
-## Cellular Image
-This data is part of the tensorflow datasets. We have copied this data into a public bucket for the demo [here](https://console.cloud.google.com/storage/browser/temp_data_bukcet).
+1. Choose Tensorflow Enterprise 2.1 (No GPUs)
+    - Make sure you have 4 CPUs and at least 15 GB of memory
+    - Click Open JupyterLab
+    - Use the Launcher (right-hand-side of screen) to open a Terminal...
+2. Install data describe:
+     - pip install data-describe[all] #[1]
+     - pip install xgboost==0.90
+     - pip install pandas_gbq
+     - pip install google-cloud-bigquery-storage
+
+[1]: Available Nov 1 2020 meanwhile email brianhray@gmail.com to request access
+
+
+Clone the examples:
+```
+git clone https://github.com/data-describe/awesome-data-science-models.git
+```
+
+
+## Sources of Data
+
+### Beatles Like Predictor
+The original dataset is available from listenbrainz and provided by BigQuery [here](https://console.cloud.google.com/bigquery?project=listenbrainz&page=table&t=listen&d=listenbrainz&p=listenbrainz&redirect_from_classic=true)
+
+### Black Friday
+The original dataset is on Kaggle, and can be found [here](https://www.kaggle.com/sdolezel/black-friday).
+
+### Census Income
+The original dataset is on the UCI Machine Learning Repository, and can be found [here](https://archive.ics.uci.edu/ml/datasets/census+income).
+
+### Chicago Taxi
+The original dataset is a BigQuery public dataset, and can be found [here](https://console.cloud.google.com/marketplace/product/city-of-chicago-public-data/chicago-taxi-trips?filter=solution-type:dataset&id=13c38348-0610-4185-a8f7-b5add142fcbe&project=mwpmltr&folder=&organizationId=). More information on BigQuery public datasets can be found [here](https://cloud.google.com/bigquery/public-data).
+
+### Lending Club
+The original dataset is made public by LendingClub, and can be found at their website or [here](https://www.kaggle.com/wordsforthewise/lending-club). The dataset used for this demo is a subset of the original dataset.
+
+### Cellular Image
+The original data is part of the tensorflow datasets. We have copied this data into a public bucket for the demo [here](https://console.cloud.google.com/storage/browser/temp_data_bukcet).
