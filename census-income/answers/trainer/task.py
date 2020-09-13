@@ -53,11 +53,13 @@ CATEGORICAL_COLUMNS = (
     "native-country",
 )
 
-file_loc = "gs://" + str(args.bucket_name)
+# file_loc = "gs://" + str(args.bucket_name)
+bucket_name=args.bucket_name
 
 
 # load training set
-with file_io.FileIO(file_loc + "/census_income/data/adult.data", "r") as train_data:
+# with file_io.FileIO(file_loc + "/census_income/data/adult.data", "r") as train_data:
+with file_io.FileIO(f"gs://{bucket_name}/adult.data", "r") as train_data:
     raw_training_data = pd.read_csv(train_data, header=None, names=COLUMNS)
 # remove column we are trying to predict ('income-level') from features list
 train_features = raw_training_data.drop("income-level", axis=1)
@@ -65,7 +67,8 @@ train_features = raw_training_data.drop("income-level", axis=1)
 train_labels = raw_training_data["income-level"] == " >50K"
 
 # load test set
-with file_io.FileIO(file_loc + "/census_income/data/adult.test", "r") as test_data:
+# with file_io.FileIO(file_loc + "/census_income/data/adult.test", "r") as test_data:
+with file_io.FileIO(f"gs://{bucket_name}/adult.test", "r") as test_data:
     raw_testing_data = pd.read_csv(test_data, names=COLUMNS, skiprows=1)
 # remove column we are trying to predict ('income-level') from features list
 test_features = raw_testing_data.drop("income-level", axis=1)
@@ -90,4 +93,4 @@ bst = xgb.train({"objective": "reg:logistic"}, dtrain, 20)
 bst.save_model("./model.bst")
 
 # upload the saved model file to Cloud Storage
-subprocess.check_call(["gsutil", "cp", "model.bst", file_loc + "/census_income/model/"])
+subprocess.check_call(["gsutil", "cp", "model.bst", f"gs://{bucket_name}/model/"])
