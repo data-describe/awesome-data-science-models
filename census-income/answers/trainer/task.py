@@ -22,25 +22,6 @@ parser.add_argument(
 args = parser.parse_args()
 
 
-# these are the column labels from the census data files
-COLUMNS = (
-    "age",
-    "workclass",
-    "fnlwgt",
-    "education",
-    "education-num",
-    "marital-status",
-    "occupation",
-    "relationship",
-    "race",
-    "sex",
-    "capital-gain",
-    "capital-loss",
-    "hours-per-week",
-    "native-country",
-    "income-level",
-)
-
 # categorical columns contain data that need to be turned into numerical values before being used by XGBoost
 CATEGORICAL_COLUMNS = (
     "workclass",
@@ -60,20 +41,20 @@ bucket_name=args.bucket_name
 # load training set
 # with file_io.FileIO(file_loc + "/census_income/data/adult.data", "r") as train_data:
 with file_io.FileIO(f"gs://{bucket_name}/adult.data", "r") as train_data:
-    raw_training_data = pd.read_csv(train_data, header=None, names=COLUMNS)
-# remove column we are trying to predict ('income-level') from features list
-train_features = raw_training_data.drop("income-level", axis=1)
+    raw_training_data = pd.read_csv(train_data)
+# remove column we are trying to predict ('income') from features list
+train_features = raw_training_data.drop("income", axis=1)
 # create training labels list
-train_labels = raw_training_data["income-level"] == " >50K"
+train_labels = raw_training_data["income"] == " >50K"
 
 # load test set
 # with file_io.FileIO(file_loc + "/census_income/data/adult.test", "r") as test_data:
 with file_io.FileIO(f"gs://{bucket_name}/adult.test", "r") as test_data:
-    raw_testing_data = pd.read_csv(test_data, names=COLUMNS, skiprows=1)
-# remove column we are trying to predict ('income-level') from features list
-test_features = raw_testing_data.drop("income-level", axis=1)
+    raw_testing_data = pd.read_csv(test_data, skiprows=[1])
+# remove column we are trying to predict ('income') from features list
+test_features = raw_testing_data.drop("income", axis=1)
 # create training labels list
-test_labels = raw_testing_data["income-level"] == " >50K."
+test_labels = raw_testing_data["income"] == " >50K."
 
 # convert data in categorical columns to numerical values
 encoders = {col: LabelEncoder() for col in CATEGORICAL_COLUMNS}
