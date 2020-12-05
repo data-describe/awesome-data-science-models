@@ -3,12 +3,14 @@ import argparse
 from google.cloud import storage
 import logging
 import pandas as pd
+import os
 
 import xgboost as xgb
 
 
 
 def run(argv=None):
+    GCP_PROJECT = os.getenv("GCP_PROJECT")
     parser = argparse.ArgumentParser()
     parser.add_argument('--pitch_type', dest='pitch_type', default='SI', help='Select the pitch type to evaluate')
 
@@ -21,7 +23,7 @@ def run(argv=None):
     # download the  data
     storage_client = storage.Client()
         # train
-    bucket_name = 'train-test-val'
+    bucket_name = f'{GCP_PROJECT}-pitch-data'
     source_blob_name = pitch_type + '/train.csv'
     destination_file_name = 'train.csv'
     bucket = storage_client.get_bucket(bucket_name)
@@ -29,7 +31,6 @@ def run(argv=None):
     blob.download_to_filename(destination_file_name)
     df_train = pd.read_csv('train.csv')
         # hyperparameters
-    bucket_name = 'hyperparameters'
     source_blob_name = pitch_type + '/params.json'
     bucket = storage_client.get_bucket(bucket_name)
     blob = bucket.blob(source_blob_name)
@@ -40,17 +41,16 @@ def run(argv=None):
         # training
     train_labels = df_train[pitch_type] == 1
     train_features = df_train.drop(pitch_type, axis=1)
-    dtrain = xgb.DMatrix(train_features, train_labels)
 
     # train a model with the optimized hyperparameters
-    trained_model = xgb.train(params, dtrain)
+    model = xgb.XGBClassifier(**params)
+    trained_model = model.fit(train_features, train_labels)
 
     # save trained model to disk
     model_filename = 'model.bst'
     trained_model.save_model(model_filename)
 
     # upload model to GCS
-    bucket_name = 'xgb-models'
     destination_blob_name = pitch_type + '/model.bst'
     source_file_name = 'model.bst'
 
