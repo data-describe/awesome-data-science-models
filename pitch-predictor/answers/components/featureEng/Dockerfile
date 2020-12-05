@@ -1,6 +1,9 @@
 FROM google/cloud-sdk:latest
-RUN pip install pandas_gbq
-RUN pip install google-cloud-storage
+
+ENV GCP_PROJECT mwpmltr
+
+COPY requirements.txt .
+RUN pip3 install -r requirements.txt
 
 COPY ./ /root/
 
