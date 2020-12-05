@@ -6,28 +6,17 @@ class collectGames(beam.DoFn):
         from bs4 import BeautifulSoup
         from google.cloud import storage
         import requests
+        import re
 
-        # check to confirm whether the date has already been processed
-        date_folder = row.year + '_' + row.month + '_' + row.day
-        storage_client = storage.Client()
-        bucket_name = 'mlb-games'
-        bucket = storage_client.get_bucket(bucket_name)
-        dates_processed = []
-        blobs = bucket.list_blobs()
-        for blob in blobs:
-            dates_processed.append(blob.name.split('/')[0])
+        game_url = f'http://www.brooksbaseball.net/tabs.php?player={row.pitcher_id}&var=gl'
+        game_request = requests.get(game_url)
+        game_soup = BeautifulSoup(game_request.text, features="html.parser")
 
-        if date_folder not in dates_processed:
-
-            day_url = 'http://www.brooksbaseball.net/pfxVB/pfx.php?month=' + row.month + '&day=' + row.day + '&year=' + row.year
-
-            day_request = requests.get(day_url)
-            day_soup = BeautifulSoup(day_request.text, features="lxml")
-
-            for i in range(0, len(day_soup.find_all('select'))):
-                if day_soup.find_all('select')[i].get('name') == 'game': # scroll through the day's games
-                    for game_opt in day_soup.find_all('select')[i].find_all('option'):
-                        game_id = game_opt.get('value').strip('/')
-                        row.game_id = game_id
-
-                        yield row
+        for link in game_soup.find_all('a'):
+            match = re.match(r"([A-Z]{3})@([A-Z]{3})\s+\((\d+)\/(\d+)\/(\d+)\)", link.text)
+            if match:
+                vals = match.groups()
+                if str(row.year)[-2:] == vals[4]:
+                    game_id = f"gid_{row.year}_{vals[2].zfill(2)}_{vals[3].zfill(2)}_{vals[0].lower()}mlb_{vals[1].lower()}mlb_1"
+                    row.game_id = game_id
+                    yield row
