@@ -2,11 +2,13 @@
 import argparse
 from google.cloud import storage
 import logging
+import os
 import numpy as np
 import pandas as pd
 
 
 def run(argv=None): #
+    GCP_PROJECT = os.getenv("GCP_PROJECT")
     parser = argparse.ArgumentParser()
     parser.add_argument('--pitch_type', dest='pitch_type', default='SI', help='Select the pitch type to evaluate')
 
@@ -16,8 +18,9 @@ def run(argv=None): #
     pitch_type = known_args.pitch_type
 
     # download the raw metrics data
-    bucket_name = 'raw-pitch-data'
-    source_blob_name = 'metrics.csv'
+    bucket_name = f'{GCP_PROJECT}-pitch-data'
+    prefix = "raw-data"
+    source_blob_name = f'{prefix}/metrics.csv'
     destination_file_name = 'metrics.csv'
 
     storage_client = storage.Client()
@@ -78,9 +81,6 @@ def run(argv=None): #
     df_val.to_csv('val.csv',index=False)
 
     # push results to GCS
-    bucket_name = 'train-test-val'
-    bucket = storage_client.get_bucket(bucket_name)
-
         # train
     destination_blob_name = pitch_type + '/' + 'train.csv'
     source_file_name = 'train.csv'

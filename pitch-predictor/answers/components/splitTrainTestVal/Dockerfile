@@ -1,7 +1,6 @@
 FROM google/cloud-sdk:latest
-RUN pip install pandas
-RUN pip install numpy
-RUN pip install google-cloud-storage
+COPY requirements.txt .
+RUN pip3 install -r requirements.txt
 
 COPY ./ /root/
 
