@@ -7,6 +7,7 @@ import logging
 import numpy as np
 import pandas as pd
 import pandas_gbq
+import os
 
 from sklearn.metrics import roc_auc_score, precision_score, accuracy_score, recall_score, f1_score, roc_curve,precision_recall_curve, auc, confusion_matrix
 #import matplotlib.pyplot as plt
@@ -41,6 +42,7 @@ def divide_chunks(l, n):
 
 
 def run(argv=None):
+    GCP_PROJECT = os.getenv("GCP_PROJECT")
     parser = argparse.ArgumentParser()
     parser.add_argument('--pitch_type', dest='pitch_type', default='SI', help='Select the pitch type to evaluate')
 
@@ -52,7 +54,7 @@ def run(argv=None):
 
     # download the  data
     storage_client = storage.Client()
-    bucket_name = 'train-test-val'
+    bucket_name = f'{GCP_PROJECT}-pitch-data'
         # test
     source_blob_name = pitch_type + '/test.csv'
     destination_file_name = 'test.csv'
@@ -60,8 +62,6 @@ def run(argv=None):
     blob = bucket.blob(source_blob_name)
     blob.download_to_filename(destination_file_name)
     df_test = pd.read_csv('test.csv')
-        # threshold
-    bucket_name = 'thresholds'
     source_blob_name = pitch_type + '/threshold.txt'
     destination_file_name = 'threshold.txt'
 
@@ -75,9 +75,12 @@ def run(argv=None):
     # define the service
     service = googleapiclient.discovery.build('ml', 'v1')
     # define the model
-    name = 'projects/ross-kubeflow/models/{}'.format(MODEL_NAME)
+    name = f'projects/{GCP_PROJECT}/models/{MODEL_NAME}'
 
-    # define validation data and labels
+        # define validation data and labels
+
+    df_test = df_test.sample(200)
+    
     test_labels = df_test[pitch_type].values.tolist()
     test_data = df_test.drop([pitch_type],axis=1).values.tolist()
 
@@ -94,12 +97,10 @@ def run(argv=None):
             name=name,
             body={'instances': part}
         ).execute()
-
         test_preds.extend(response['predictions'])
 
     # add predictions to Test DataFrame
     df_test['pred_score'] = test_preds
-
 
     # turn our prediction probabilities from the test set into actual predictions with this threshold
     predicted_test_labels = returnPreds(test_preds, threshold)
@@ -114,7 +115,7 @@ def run(argv=None):
     # upload model results to BigQuery
     today = datetime.datetime.now().strftime("%Y-%m-%d")
     df = pd.DataFrame([['xgboost',pitch_type,precision,accuracy,recall,f1,threshold,today]],columns=['model_type','pitch_type','precision','accuracy','recall','f1','threshold','date'])
-    df.to_gbq(destination_table='baseball.models',project_id='ross-kubeflow',if_exists='append')
+    df.to_gbq(destination_table='baseball.models',project_id=GCP_PROJECT,if_exists='append')
 
 
     ''' COMMENTING PLOTTING FUNCTIONS

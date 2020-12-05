@@ -1,9 +1,6 @@
 FROM google/cloud-sdk:latest
-RUN pip install pandas
-RUN pip install google-cloud-storage
-RUN pip install google-api-python-client
-RUN pip install sklearn
-RUN pip install pandas_gbq
+COPY requirements.txt .
+RUN pip3 install -r requirements.txt
 
 COPY ./ /root/
 
