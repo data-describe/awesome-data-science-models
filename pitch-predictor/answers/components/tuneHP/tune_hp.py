@@ -5,6 +5,7 @@ import json
 import logging
 import numpy as np
 import pandas as pd
+import os
 
 from hyperopt import STATUS_OK
 from hyperopt import hp
@@ -19,6 +20,7 @@ from sklearn.metrics import roc_auc_score
 
 
 def run(argv=None):
+    GCP_PROJECT = os.getenv("GCP_PROJECT")
     parser = argparse.ArgumentParser()
     parser.add_argument('--pitch_type', dest='pitch_type', default='SI', help='Select the pitch type to evaluate')
     '''
@@ -51,7 +53,7 @@ def run(argv=None):
 
     # download the  data
     storage_client = storage.Client()
-    bucket_name = 'train-test-val'
+    bucket_name = f'{GCP_PROJECT}-pitch-data'
 
         # train
     source_blob_name = pitch_type + '/train.csv'
@@ -102,7 +104,7 @@ def run(argv=None):
     # push params to cloud storage
     best_params_dump = json.dumps(best_params)
 
-    bucket_name = 'hyperparameters'
+    bucket_name = f'{GCP_PROJECT}-pitch-data'
     destination_blob_name = pitch_type + '/params.json'
 
 

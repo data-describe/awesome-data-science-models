@@ -1,0 +1,7 @@
+
+RUN pip install pandas
+RUN pip install numpy
+RUN pip install google-cloud-storage
+RUN pip install hyperopt
+RUN pip install xgboost
+RUN pip install sklearn

@@ -1,10 +1,6 @@
 FROM google/cloud-sdk:latest
-RUN pip install pandas
-RUN pip install numpy
-RUN pip install google-cloud-storage
-RUN pip install hyperopt
-RUN pip install xgboost
-RUN pip install sklearn
+COPY requirements.txt .
+RUN pip3 install -r requirements.txt
 
 COPY ./ /root/
 
