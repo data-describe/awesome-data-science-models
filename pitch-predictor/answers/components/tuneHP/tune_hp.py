@@ -17,7 +17,9 @@ import xgboost as xgb
 
 from sklearn.metrics import roc_auc_score
 
-
+def convert(o):
+    if isinstance(o, np.generic): return o.item()  
+    raise TypeError
 
 def run(argv=None):
     parser = argparse.ArgumentParser()
@@ -101,7 +103,7 @@ def run(argv=None):
     best_params = fmin(fn = objective, space = space, algo = tpe.suggest, max_evals = MAX_EVALS, trials = bayes_trials)
 
     # push params to cloud storage
-    best_params_dump = json.dumps(best_params)
+    best_params_dump = json.dumps(best_params, default=convert)
 
     destination_blob_name = pitch_type + '/params.json'
 
