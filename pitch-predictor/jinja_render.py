@@ -9,7 +9,7 @@ def run(GCP_PROJECT):
     env = Environment()
     for path, folders, files in os.walk("."):
         for file in files:
-            if os.path.splitext(file)[1] in [".py", ""]:
+            if os.path.splitext(file)[1] in [".py", ".yaml", ""]:
                 filepath = os.path.join(path, file)
                 print(filepath)
                 with open(filepath, "r") as f:
