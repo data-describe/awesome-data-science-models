@@ -4,6 +4,6 @@ COPY requirements.txt .
 RUN pip3 install -r requirements.txt
 
 WORKDIR /root
-COPY ./ .
+COPY . .
 
 ENTRYPOINT [ "python3", "collect_stats_dataflow.py" ]

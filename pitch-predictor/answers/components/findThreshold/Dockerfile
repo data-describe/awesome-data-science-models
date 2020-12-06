@@ -1,12 +1,11 @@
 FROM google/cloud-sdk:latest
 
-
+RUN pip3 install --upgrade pip
 
 COPY requirements.txt .
 RUN pip3 install -r requirements.txt
 
+WORKDIR /root
+COPY . .
 
-COPY ./ /root/
-
-RUN chmod 777 -R /root
-ENTRYPOINT [ "python", "/root/find_threshold.py" ]
+ENTRYPOINT [ "python3", "find_threshold.py" ]
