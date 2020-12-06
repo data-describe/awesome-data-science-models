@@ -49,7 +49,7 @@ def run(argv=None):
     parser.add_argument(
         "--project",
         dest="project",
-        default="mwpmltr",
+        default="{{ GCP_PROJECT }}",
         help="Select the gcp project to run this job",
     )
     parser.add_argument(
