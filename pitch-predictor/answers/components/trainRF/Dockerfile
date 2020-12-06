@@ -2,11 +2,11 @@ FROM google/cloud-sdk:latest
 
 
 
-RUN pip3 installpandas
-RUN pip3 installgoogle-cloud-storage
-RUN pip3 installnumpy
-RUN pip3 installjoblib
-RUN pip3 installsklearn
+RUN pip3 install pandas
+RUN pip3 install google-cloud-storage
+RUN pip3 install numpy
+RUN pip3 install joblib
+RUN pip3 install sklearn
 
 
 COPY ./ /root/

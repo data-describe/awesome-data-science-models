@@ -2,9 +2,9 @@ FROM google/cloud-sdk:latest
 
 
 
-RUN pip3 installpandas
-RUN pip3 installgoogle-cloud-storage
-RUN pip3 installgoogle-api-python-client
+RUN pip3 install pandas
+RUN pip3 install google-cloud-storage
+RUN pip3 install google-api-python-client
 
 COPY ./ /root/
 
