@@ -10,7 +10,7 @@ def collect_stats_op(): #symbol
         name='Collect Stats',
         image='gcr.io/{{ GCP_PROJECT }}/collect-stats:latest'       
         
-    ).apply(gcp.use_gcp_secret('user-gcp-sa'))
+    )# .apply(gcp.use_gcp_secret('user-gcp-sa'))
 
 
 def feature_eng_op(): 
@@ -18,7 +18,7 @@ def feature_eng_op():
         name='Feature Engineering',
         image='gcr.io/{{ GCP_PROJECT }}/feature-eng:latest',   
         
-    ).apply(gcp.use_gcp_secret('user-gcp-sa'))
+    )# .apply(gcp.use_gcp_secret('user-gcp-sa'))
 
 
 def train_test_val_op(pitch_type): 
@@ -29,7 +29,7 @@ def train_test_val_op(pitch_type):
             '--pitch_type', pitch_type
         ]    
         
-    ).apply(gcp.use_gcp_secret('user-gcp-sa'))
+    )# .apply(gcp.use_gcp_secret('user-gcp-sa'))
 
 
 def tune_hp_op(pitch_type): 
@@ -40,7 +40,7 @@ def tune_hp_op(pitch_type):
             '--pitch_type', pitch_type
         ]    
         
-    ).apply(gcp.use_gcp_secret('user-gcp-sa'))
+    )# .apply(gcp.use_gcp_secret('user-gcp-sa'))
 
 
 def train_xgboost_op(pitch_type): 
@@ -51,7 +51,7 @@ def train_xgboost_op(pitch_type):
             '--pitch_type', pitch_type
         ]    
         
-    ).apply(gcp.use_gcp_secret('user-gcp-sa'))
+    )# .apply(gcp.use_gcp_secret('user-gcp-sa'))
 
 
 def host_xgboost_op(pitch_type): 
@@ -62,7 +62,7 @@ def host_xgboost_op(pitch_type):
             '--pitch_type', pitch_type
         ] 
         
-    ).apply(gcp.use_gcp_secret('user-gcp-sa'))
+    )# .apply(gcp.use_gcp_secret('user-gcp-sa'))
 
 
 def find_threshold_op(pitch_type): 
@@ -73,7 +73,7 @@ def find_threshold_op(pitch_type):
             '--pitch_type', pitch_type
         ]    
         
-    ).apply(gcp.use_gcp_secret('user-gcp-sa'))
+    )# .apply(gcp.use_gcp_secret('user-gcp-sa'))
 
 
 def evaluate_model_op(pitch_type, dummy1=None): 
@@ -87,7 +87,7 @@ def evaluate_model_op(pitch_type, dummy1=None):
             'data': '/root/dummy.txt',
         } 
         
-    ).apply(gcp.use_gcp_secret('user-gcp-sa'))
+    )# .apply(gcp.use_gcp_secret('user-gcp-sa'))
 
 
 def enhance_features_op(dummy_1=None, dummy_2=None, dummy_3=None, dummy_4=None, dummy_5=None, dummy_6=None, dummy_7=None, dummy_8=None, dummy_9=None, dummy_10=None, dummy_11=None, dummy_12=None): 
@@ -109,7 +109,7 @@ def enhance_features_op(dummy_1=None, dummy_2=None, dummy_3=None, dummy_4=None, 
             '--dummy_12', dummy_12
         ]
         
-    ).apply(gcp.use_gcp_secret('user-gcp-sa'))
+    )# .apply(gcp.use_gcp_secret('user-gcp-sa'))
 
 
 def train_rf_op(): #symbol
@@ -117,7 +117,7 @@ def train_rf_op(): #symbol
         name='Train RF',
         image='gcr.io/{{ GCP_PROJECT }}/train-rf:latest'       
         
-    ).apply(gcp.use_gcp_secret('user-gcp-sa'))
+    )# .apply(gcp.use_gcp_secret('user-gcp-sa'))
 
 
 def host_rf_op(): #symbol
@@ -125,7 +125,7 @@ def host_rf_op(): #symbol
         name='Host RF',
         image='gcr.io/{{ GCP_PROJECT }}/host-rf:latest'       
         
-    ).apply(gcp.use_gcp_secret('user-gcp-sa'))
+    )# .apply(gcp.use_gcp_secret('user-gcp-sa'))
 
 
 @dsl.pipeline(

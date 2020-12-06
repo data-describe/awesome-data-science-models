@@ -10,7 +10,7 @@ def collect_stats_op(): #symbol
         name='Collect Stats',
         image='gcr.io/{{ GCP_PROJECT }}/collect-stats:latest'       
         
-    ).apply(gcp.use_gcp_secret('user-gcp-sa'))
+    )# .apply(gcp.use_gcp_secret('user-gcp-sa'))
 
 
 def feature_eng_op(): 
@@ -18,7 +18,7 @@ def feature_eng_op():
         name='Feature Engineering',
         image='gcr.io/{{ GCP_PROJECT }}/feature-eng:latest',   
         
-    ).apply(gcp.use_gcp_secret('user-gcp-sa'))
+    )# .apply(gcp.use_gcp_secret('user-gcp-sa'))
 
 
 def train_test_val_op(pitch_type): 
@@ -29,7 +29,7 @@ def train_test_val_op(pitch_type):
             '--pitch_type', pitch_type
         ]    
         
-    ).apply(gcp.use_gcp_secret('user-gcp-sa'))
+    )# .apply(gcp.use_gcp_secret('user-gcp-sa'))
 
 
 def tune_hp_op(pitch_type): 
@@ -40,7 +40,7 @@ def tune_hp_op(pitch_type):
             '--pitch_type', pitch_type
         ]    
         
-    ).apply(gcp.use_gcp_secret('user-gcp-sa'))
+    )# .apply(gcp.use_gcp_secret('user-gcp-sa'))
 
 
 def train_xgboost_op(pitch_type): 
@@ -51,7 +51,7 @@ def train_xgboost_op(pitch_type):
             '--pitch_type', pitch_type
         ]    
         
-    ).apply(gcp.use_gcp_secret('user-gcp-sa'))
+    )# .apply(gcp.use_gcp_secret('user-gcp-sa'))
 
 
 def host_xgboost_op(pitch_type): 
@@ -62,7 +62,7 @@ def host_xgboost_op(pitch_type):
             '--pitch_type', pitch_type
         ] 
         
-    ).apply(gcp.use_gcp_secret('user-gcp-sa'))
+    )# .apply(gcp.use_gcp_secret('user-gcp-sa'))
 
 
 def find_threshold_op(pitch_type): 
@@ -73,7 +73,7 @@ def find_threshold_op(pitch_type):
             '--pitch_type', pitch_type
         ]    
         
-    ).apply(gcp.use_gcp_secret('user-gcp-sa'))
+    )# .apply(gcp.use_gcp_secret('user-gcp-sa'))
 
 
 def evaluate_model_op(pitch_type, dummy1=None): 
@@ -87,7 +87,7 @@ def evaluate_model_op(pitch_type, dummy1=None):
             'data': '/root/dummy.txt',
         } 
         
-    ).apply(gcp.use_gcp_secret('user-gcp-sa'))
+    )# .apply(gcp.use_gcp_secret('user-gcp-sa'))
 
 
 
