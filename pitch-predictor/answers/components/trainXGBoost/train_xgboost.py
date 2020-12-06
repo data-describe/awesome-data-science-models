@@ -43,8 +43,7 @@ def run(argv=None):
 -   dtrain = xgb.DMatrix(train_features, train_labels)
 
     # train a model with the optimized hyperparameters
--   trained_model = xgb.train(params, dtrain)
-    trained_model = model.fit(train_features, train_labels)
+    trained_model = xgb.train(params, dtrain)
 
     # save trained model to disk
     model_filename = 'model.bst'
