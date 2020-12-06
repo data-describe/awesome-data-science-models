@@ -73,7 +73,7 @@ def run(argv=None):
     # define the service
     service = googleapiclient.discovery.build('ml', 'v1')
     # define the model
-    name = 'projects/{{ GCP_PROJECT }}/models/{MODEL_NAME}'
+    name = f'projects/{{ GCP_PROJECT }}/models/{MODEL_NAME}'
 
     # define validation data and labels
     val_labels = df_val[pitch_type].values.tolist()
