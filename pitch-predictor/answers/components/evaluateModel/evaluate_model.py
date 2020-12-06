@@ -9,9 +9,19 @@ import pandas as pd
 import pandas_gbq
 import os
 
-from sklearn.metrics import roc_auc_score, precision_score, accuracy_score, recall_score, f1_score, roc_curve,precision_recall_curve, auc, confusion_matrix
-#import matplotlib.pyplot as plt
+from sklearn.metrics import (
+    roc_auc_score,
+    precision_score,
+    accuracy_score,
+    recall_score,
+    f1_score,
+    roc_curve,
+    precision_recall_curve,
+    auc,
+    confusion_matrix,
+)
 
+# import matplotlib.pyplot as plt
 
 
 def returnPreds(preds, threshold):
@@ -24,7 +34,7 @@ def returnPreds(preds, threshold):
 
     Output:
         - predicted_labels list of binary predicted labels based on threshold
-    """            
+    """
     predicted_labels = []
     for pred in preds:
         if pred >= threshold:
@@ -34,55 +44,58 @@ def returnPreds(preds, threshold):
 
     return predicted_labels
 
-def divide_chunks(l, n): 
-      
-    # looping till length l 
-    for i in range(0, len(l), n):  
-        yield l[i:i + n]
+
+def divide_chunks(l, n):
+
+    # looping till length l
+    for i in range(0, len(l), n):
+        yield l[i : i + n]
 
 
 def run(argv=None):
-    GCP_PROJECT = os.getenv("GCP_PROJECT")
     parser = argparse.ArgumentParser()
-    parser.add_argument('--pitch_type', dest='pitch_type', default='SI', help='Select the pitch type to evaluate')
+    parser.add_argument(
+        "--pitch_type",
+        dest="pitch_type",
+        default="SI",
+        help="Select the pitch type to evaluate",
+    )
 
     known_args, _ = parser.parse_known_args(argv)
 
-    # define the pitch type 
+    # define the pitch type
     pitch_type = known_args.pitch_type
-
 
     # download the  data
     storage_client = storage.Client()
-    bucket_name = f'{GCP_PROJECT}-pitch-data'
-        # test
-    source_blob_name = pitch_type + '/test.csv'
-    destination_file_name = 'test.csv'
+    bucket_name = "{{ GCP_PROJECT }}-pitch-data"
+    # test
+    source_blob_name = pitch_type + "/test.csv"
+    destination_file_name = "test.csv"
     bucket = storage_client.get_bucket(bucket_name)
     blob = bucket.blob(source_blob_name)
     blob.download_to_filename(destination_file_name)
-    df_test = pd.read_csv('test.csv')
-    source_blob_name = pitch_type + '/threshold.txt'
-    destination_file_name = 'threshold.txt'
-
+    df_test = pd.read_csv("test.csv")
+    source_blob_name = pitch_type + "/threshold.txt"
+    destination_file_name = "threshold.txt"
 
     bucket = storage_client.get_bucket(bucket_name)
     blob = bucket.blob(source_blob_name)
     threshold = eval(blob.download_as_string())
 
     # define model name
-    MODEL_NAME = 'xgboost_' + pitch_type
+    MODEL_NAME = "xgboost_" + pitch_type
     # define the service
-    service = googleapiclient.discovery.build('ml', 'v1')
+    service = googleapiclient.discovery.build("ml", "v1")
     # define the model
-    name = f'projects/{GCP_PROJECT}/models/{MODEL_NAME}'
+    name = f"projects/{GCP_PROJECT}/models/{MODEL_NAME}"
 
-        # define validation data and labels
+    # define validation data and labels
 
     df_test = df_test.sample(200)
-    
+
     test_labels = df_test[pitch_type].values.tolist()
-    test_data = df_test.drop([pitch_type],axis=1).values.tolist()
+    test_data = df_test.drop([pitch_type], axis=1).values.tolist()
 
     # collect validation predictions
 
@@ -92,19 +105,17 @@ def run(argv=None):
     test_data_parts = list(divide_chunks(test_data, 200))
 
     test_preds = []
-    for part in test_data_parts: 
-        response = service.projects().predict(
-            name=name,
-            body={'instances': part}
-        ).execute()
-        test_preds.extend(response['predictions'])
+    for part in test_data_parts:
+        response = (
+            service.projects().predict(name=name, body={"instances": part}).execute()
+        )
+        test_preds.extend(response["predictions"])
 
     # add predictions to Test DataFrame
-    df_test['pred_score'] = test_preds
+    df_test["pred_score"] = test_preds
 
     # turn our prediction probabilities from the test set into actual predictions with this threshold
     predicted_test_labels = returnPreds(test_preds, threshold)
-
 
     # calculate accuracy metrics
     precision = precision_score(test_labels, predicted_test_labels)
@@ -114,11 +125,26 @@ def run(argv=None):
 
     # upload model results to BigQuery
     today = datetime.datetime.now().strftime("%Y-%m-%d")
-    df = pd.DataFrame([['xgboost',pitch_type,precision,accuracy,recall,f1,threshold,today]],columns=['model_type','pitch_type','precision','accuracy','recall','f1','threshold','date'])
-    df.to_gbq(destination_table='baseball.models',project_id=GCP_PROJECT,if_exists='append')
+    df = pd.DataFrame(
+        [["xgboost", pitch_type, precision, accuracy, recall, f1, threshold, today]],
+        columns=[
+            "model_type",
+            "pitch_type",
+            "precision",
+            "accuracy",
+            "recall",
+            "f1",
+            "threshold",
+            "date",
+        ],
+    )
+    df.to_gbq(
+        destination_table="baseball.models",
+        project_id="{{ GCP_PROJECT }}",
+        if_exists="append",
+    )
 
-
-    ''' COMMENTING PLOTTING FUNCTIONS
+    """ COMMENTING PLOTTING FUNCTIONS
     # plot the ROC and PR curves
     plotPRandROC(test_labels, test_preds)
 
@@ -130,17 +156,15 @@ def run(argv=None):
 
     # Plot confusion matrix
     plotConfusionMatrix(test_labels, predicted_test_labels, classes=np.asarray([0,1]))
-    '''
+    """
 
     # write fake file to pass as output
-    f = open('/root/dummy.txt', 'w')
-    f.write('dummy text')
+    f = open("/root/dummy.txt", "w")
+    f.write("dummy text")
     f.close()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     logging.getLogger().setLevel(logging.ERROR)
     run()
-
-
 

@@ -8,7 +8,6 @@ import pandas as pd
 
 
 def run(argv=None): #
-    GCP_PROJECT = os.getenv("GCP_PROJECT")
     parser = argparse.ArgumentParser()
     parser.add_argument('--pitch_type', dest='pitch_type', default='SI', help='Select the pitch type to evaluate')
 
@@ -18,7 +17,7 @@ def run(argv=None): #
     pitch_type = known_args.pitch_type
 
     # download the raw metrics data
-    bucket_name = f'{GCP_PROJECT}-pitch-data'
+    bucket_name = '{{ GCP_PROJECT }}-pitch-data'
     prefix = "raw-data"
     source_blob_name = f'{prefix}/metrics.csv'
     destination_file_name = 'metrics.csv'

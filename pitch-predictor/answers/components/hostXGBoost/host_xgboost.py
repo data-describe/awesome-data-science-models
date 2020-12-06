@@ -12,7 +12,6 @@ import subprocess
 
 
 def run(argv=None):
-    GCP_PROJECT = os.getenv("GCP_PROJECT")
     parser = argparse.ArgumentParser()
     parser.add_argument('--pitch_type', dest='pitch_type', default='SI', help='Select the pitch type to evaluate')
 
@@ -22,7 +21,7 @@ def run(argv=None):
     pitch_type = known_args.pitch_type
 
     # define some contants for AI Platform
-    bucket_name = f'{GCP_PROJECT}-pitch-data'
+    bucket_name = '{{ GCP_PROJECT }}-pitch-data'
     MODEL_DIR = f'gs://{bucket_name}/' + pitch_type + '/'
     MODEL_NAME = 'xgboost_' + pitch_type
     VERSION_NAME = datetime.datetime.now().strftime(pitch_type + '_%Y%m%d%M')    

@@ -17,7 +17,7 @@ from ParDoFns.collectPitchers import collectPitchers
 from ParDoFns.collectStats import collectStats
 
 # environment vars
-# os.environ['GOOGLE_APPLICATION_CREDENTIALS']='ross-kubeflow-da165d24798a.json'
+# os.environ['GOOGLE_APPLICATION_CREDENTIALS']='{{ GCP_PROJECT }}-da165d24798a.json'
 
 
 # create a list of days to collect
@@ -61,13 +61,13 @@ def run(argv=None):
     parser.add_argument(
         "--staging_location",
         dest="staging_location",
-        default=f"gs://{os.getenv('GCP_PROJECT')}-dataflow/dataflow_stage/",
+        default=f"gs://{{ GCP_PROJECT }}-dataflow/dataflow_stage/",
         help="Select the staging location for this job",
     )
     parser.add_argument(
         "--temp_location",
         dest="temp_location",
-        default=f"gs://{os.getenv('GCP_PROJECT')}-dataflow/dataflow_tmp/",
+        default=f"gs://{{ GCP_PROJECT }}-dataflow/dataflow_tmp/",
         help="Select the temp location for this job",
     )
     parser.add_argument(
@@ -124,7 +124,7 @@ def run(argv=None):
         stats | "Write to BigQuery" >> beam.io.WriteToBigQuery(
             table="raw_games",
             dataset="baseball",
-            project=os.getenv("GCP_PROJECT"),
+            project="{{ GCP_PROJECT }}",
             create_disposition="CREATE_IF_NEEDED",
             write_disposition="WRITE_APPEND",
             schema=schema,

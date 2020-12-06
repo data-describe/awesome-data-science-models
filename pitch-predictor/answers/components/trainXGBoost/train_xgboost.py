@@ -10,7 +10,6 @@ import xgboost as xgb
 
 
 def run(argv=None):
-    GCP_PROJECT = os.getenv("GCP_PROJECT")
     parser = argparse.ArgumentParser()
     parser.add_argument('--pitch_type', dest='pitch_type', default='SI', help='Select the pitch type to evaluate')
 
@@ -23,7 +22,7 @@ def run(argv=None):
     # download the  data
     storage_client = storage.Client()
         # train
-    bucket_name = f'{GCP_PROJECT}-pitch-data'
+    bucket_name = '{{ GCP_PROJECT }}-pitch-data'
     source_blob_name = pitch_type + '/train.csv'
     destination_file_name = 'train.csv'
     bucket = storage_client.get_bucket(bucket_name)

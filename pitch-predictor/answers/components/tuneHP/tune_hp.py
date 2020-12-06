@@ -20,11 +20,10 @@ from sklearn.metrics import roc_auc_score
 
 
 def run(argv=None):
-    GCP_PROJECT = os.getenv("GCP_PROJECT")
     parser = argparse.ArgumentParser()
     parser.add_argument('--pitch_type', dest='pitch_type', default='SI', help='Select the pitch type to evaluate')
     '''
-    parser.add_argument('--project', dest='project', default='ross-kubeflow', help='Select the gcp project to run this job')
+    parser.add_argument('--project', dest='project', default='{{ GCP_PROJECT }}', help='Select the gcp project to run this job')
     parser.add_argument('--staging_location', dest='staging_location', default='gs://dataflow-holding/dataflow_stage/', help='Select the staging location for this job')
     parser.add_argument('--temp_location', dest='temp_location', default='gs://dataflow-holding/dataflow_tmp/', help='Select the temp location for this job')
     parser.add_argument('--setup_file', dest='setup_file', default='/root/setup.py', help='Config options for the pipeline')
@@ -53,7 +52,7 @@ def run(argv=None):
 
     # download the  data
     storage_client = storage.Client()
-    bucket_name = f'{GCP_PROJECT}-pitch-data'
+    bucket_name = '{{ GCP_PROJECT }}-pitch-data'
 
         # train
     source_blob_name = pitch_type + '/train.csv'
@@ -104,7 +103,6 @@ def run(argv=None):
     # push params to cloud storage
     best_params_dump = json.dumps(best_params)
 
-    bucket_name = f'{GCP_PROJECT}-pitch-data'
     destination_blob_name = pitch_type + '/params.json'
 
 

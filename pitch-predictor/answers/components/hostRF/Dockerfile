@@ -1,4 +1,7 @@
 FROM google/cloud-sdk:latest
+
+
+
 RUN pip install pandas
 RUN pip install google-cloud-storage
 
