@@ -40,7 +40,7 @@ def run(argv=None):
         # training
     train_labels = df_train[pitch_type] == 1
     train_features = df_train.drop(pitch_type, axis=1)
--   dtrain = xgb.DMatrix(train_features, train_labels)
+    dtrain = xgb.DMatrix(train_features, train_labels)
 
     # train a model with the optimized hyperparameters
     trained_model = xgb.train(params, dtrain)
