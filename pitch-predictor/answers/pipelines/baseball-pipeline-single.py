@@ -8,78 +8,78 @@ import kfp.gcp as gcp
 def collect_stats_op(): #symbol
     return dsl.ContainerOp(
         name='Collect Stats',
-        image='gcr.io/ross-kubeflow/collect-stats:latest'       
+        image='gcr.io/{{ GCP_PROJECT }}/collect-stats:latest'       
         
-    ).apply(gcp.use_gcp_secret('user-gcp-sa'))
+    )# .apply(gcp.use_gcp_secret('user-gcp-sa'))
 
 
 def feature_eng_op(): 
     return dsl.ContainerOp(
         name='Feature Engineering',
-        image='gcr.io/ross-kubeflow/feature-eng:latest',   
+        image='gcr.io/{{ GCP_PROJECT }}/feature-eng:latest',   
         
-    ).apply(gcp.use_gcp_secret('user-gcp-sa'))
+    )# .apply(gcp.use_gcp_secret('user-gcp-sa'))
 
 
 def train_test_val_op(pitch_type): 
     return dsl.ContainerOp(
         name='Split Train Test Val',
-        image='gcr.io/ross-kubeflow/train-test-val:latest',
+        image='gcr.io/{{ GCP_PROJECT }}/train-test-val:latest',
         arguments=[
             '--pitch_type', pitch_type
         ]    
         
-    ).apply(gcp.use_gcp_secret('user-gcp-sa'))
+    )# .apply(gcp.use_gcp_secret('user-gcp-sa'))
 
 
 def tune_hp_op(pitch_type): 
     return dsl.ContainerOp(
         name='Tune Hyperparameters',
-        image='gcr.io/ross-kubeflow/tune-hp:latest',
+        image='gcr.io/{{ GCP_PROJECT }}/tune-hp:latest',
         arguments=[
             '--pitch_type', pitch_type
         ]    
         
-    ).apply(gcp.use_gcp_secret('user-gcp-sa'))
+    )# .apply(gcp.use_gcp_secret('user-gcp-sa'))
 
 
 def train_xgboost_op(pitch_type): 
     return dsl.ContainerOp(
         name='Train XGBoost',
-        image='gcr.io/ross-kubeflow/train-xgboost:latest',
+        image='gcr.io/{{ GCP_PROJECT }}/train-xgboost:latest',
         arguments=[
             '--pitch_type', pitch_type
         ]    
         
-    ).apply(gcp.use_gcp_secret('user-gcp-sa'))
+    )# .apply(gcp.use_gcp_secret('user-gcp-sa'))
 
 
 def host_xgboost_op(pitch_type): 
     return dsl.ContainerOp(
         name='Host Model',
-        image='gcr.io/ross-kubeflow/host-xgboost:latest',
+        image='gcr.io/{{ GCP_PROJECT }}/host-xgboost:latest',
         arguments=[
             '--pitch_type', pitch_type
         ] 
         
-    ).apply(gcp.use_gcp_secret('user-gcp-sa'))
+    )# .apply(gcp.use_gcp_secret('user-gcp-sa'))
 
 
 def find_threshold_op(pitch_type): 
     return dsl.ContainerOp(
         name='Find Threshold',
-        image='gcr.io/ross-kubeflow/find-threshold:latest',
+        image='gcr.io/{{ GCP_PROJECT }}/find-threshold:latest',
         arguments=[
             '--pitch_type', pitch_type
         ]    
         
-    ).apply(gcp.use_gcp_secret('user-gcp-sa'))
+    )# .apply(gcp.use_gcp_secret('user-gcp-sa'))
 
 
 def evaluate_model_op(pitch_type, dummy1=None): 
     return dsl.ContainerOp(
         name='Evaluate Models',
-        image='gcr.io/ross-kubeflow/evaluate-model:latest',
+        image='gcr.io/{{ GCP_PROJECT }}/evaluate-model:latest',
         arguments=[
             '--pitch_type', pitch_type
         ],
@@ -87,7 +87,7 @@ def evaluate_model_op(pitch_type, dummy1=None):
             'data': '/root/dummy.txt',
         } 
         
-    ).apply(gcp.use_gcp_secret('user-gcp-sa'))
+    )# .apply(gcp.use_gcp_secret('user-gcp-sa'))
 
 
 

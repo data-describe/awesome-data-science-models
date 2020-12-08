@@ -47,11 +47,11 @@ def collectSample():
     ,CASE WHEN mlbam_pitch_name = 'KN' THEN 1 ELSE 0 END AS KN
     ,CASE WHEN mlbam_pitch_name = 'FO' THEN 1 ELSE 0 END AS FO
 
-    FROM `ross-kubeflow.baseball.raw_games`
+    FROM `{{ GCP_PROJECT }}.baseball.raw_games`
     WHERE mlbam_pitch_name IN ('FT','FS','CH','FF','SL','CU','FC','SI','KC','EP','KN','FO')
     LIMIT 100
     """
     
-    sample_df = pandas_gbq.read_gbq(SQL, project_id='ross-kubeflow')
+    sample_df = pandas_gbq.read_gbq(SQL, project_id='{{ GCP_PROJECT }}')
     
     return sample_df

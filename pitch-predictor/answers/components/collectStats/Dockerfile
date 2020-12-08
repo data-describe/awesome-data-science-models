@@ -1,7 +1,9 @@
-FROM google/cloud-sdk:latest
-RUN pip install apache_beam[gcp]
+FROM apache/beam_python3.7_sdk
 
-COPY ./ /root/
+COPY requirements.txt .
+RUN pip3 install -r requirements.txt
 
-RUN chmod 777 -R /root
-ENTRYPOINT [ "python", "/root/collect_stats_dataflow.py" ]
+WORKDIR /root
+COPY . .
+
+ENTRYPOINT [ "python3", "collect_stats_dataflow.py" ]

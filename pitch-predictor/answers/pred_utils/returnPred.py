@@ -8,7 +8,7 @@ def returnPred(pitch_data):
     preds_dict = {}
     for pitch_type in pitch_types:
         MODEL_NAME = 'xgboost_' + pitch_type
-        name = 'projects/ross-kubeflow/models/{}'.format(MODEL_NAME)
+        name = 'projects/{{ GCP_PROJECT }}/models/{}'.format(MODEL_NAME)
 
         response = service.projects().predict(
                 name=name,

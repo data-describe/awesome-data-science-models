@@ -1,12 +1,12 @@
 # libraries
 from google.cloud import storage
+from google.cloud import exceptions
+import os
 import logging
 import pandas_gbq
 
 
 def run(argv=None):
-
-
     SQL = """
     SELECT  
      sz_top
@@ -53,14 +53,21 @@ def run(argv=None):
     ,CASE WHEN mlbam_pitch_name = 'KN' THEN 1 ELSE 0 END AS KN
     ,CASE WHEN mlbam_pitch_name = 'FO' THEN 1 ELSE 0 END AS FO
 
-    FROM `ross-kubeflow.baseball.raw_games`
+    FROM `{{ GCP_PROJECT }}.baseball.raw_games`
     """
 
-    df = pandas_gbq.read_gbq(SQL, project_id='ross-kubeflow')
+    df = pandas_gbq.read_gbq(SQL, project_id="{{ GCP_PROJECT }}")
 
     storage_client = storage.Client()
-    bucket_name = 'raw-pitch-data'
-    destination_blob_name = 'metrics.csv'
+    bucket_name = '{{ GCP_PROJECT }}-pitch-data'
+    prefix = "raw-data"
+    destination_blob_name = f'{prefix}/metrics.csv'
+
+    try:
+        bucket = storage_client.bucket(bucket_name)
+        bucket.create(project="{{ GCP_PROJECT }}")
+    except exceptions.Conflict:
+        pass
 
     source_file_name = 'metrics.csv'
     df.to_csv(source_file_name,index=False)

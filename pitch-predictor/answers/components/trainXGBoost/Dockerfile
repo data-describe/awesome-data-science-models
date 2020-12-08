@@ -1,10 +1,11 @@
 FROM google/cloud-sdk:latest
-RUN pip install pandas
-RUN pip install google-cloud-storage
-RUN pip install xgboost
 
+RUN pip3 install --upgrade pip
 
-COPY ./ /root/
+COPY requirements.txt .
+RUN pip3 install -r requirements.txt
 
-RUN chmod 777 -R /root
-ENTRYPOINT [ "python", "/root/train_xgboost.py" ]
+WORKDIR /root
+COPY . .
+
+ENTRYPOINT [ "python3", "train_xgboost.py" ]

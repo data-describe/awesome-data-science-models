@@ -15,17 +15,17 @@ class collectStats(beam.DoFn):
 
         # write the DataFrame to disk
         df = pitcher_df[0]
-        source_file_name = row.game_id + '|' + row.pitcher_id + '.csv'
+        source_file_name = row.game_id + '-' + row.pitcher_id + '.csv'
         df.to_csv(source_file_name,index=False)
         
         # upload the file to GCS
-        storage_client = storage.Client()
-        bucket_name = 'mlb-games'
-        destination_blob_name = row.year + '_' + row.month + '_' + row.day + '/' + row.game_id + '/' + row.pitcher_id + '.csv'
+        # storage_client = storage.Client()
+        # bucket_name = 'mlb-games'
+        # destination_blob_name = row.year + '_' + row.month + '_' + row.day + '/' + row.game_id + '/' + row.pitcher_id + '.csv'
 
-        bucket = storage_client.get_bucket(bucket_name)
-        blob = bucket.blob(destination_blob_name)
-        blob.upload_from_filename(source_file_name)
+        # bucket = storage_client.get_bucket(bucket_name)
+        # blob = bucket.blob(destination_blob_name)
+        # blob.upload_from_filename(source_file_name)
 
         # yield one row as a time as a dictionary
         df = df.applymap(str) # convert all fields to strings

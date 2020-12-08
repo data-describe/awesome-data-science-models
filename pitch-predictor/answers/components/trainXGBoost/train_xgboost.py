@@ -3,6 +3,7 @@ import argparse
 from google.cloud import storage
 import logging
 import pandas as pd
+import os
 
 import xgboost as xgb
 
@@ -21,7 +22,7 @@ def run(argv=None):
     # download the  data
     storage_client = storage.Client()
         # train
-    bucket_name = 'train-test-val'
+    bucket_name = '{{ GCP_PROJECT }}-pitch-data'
     source_blob_name = pitch_type + '/train.csv'
     destination_file_name = 'train.csv'
     bucket = storage_client.get_bucket(bucket_name)
@@ -29,7 +30,6 @@ def run(argv=None):
     blob.download_to_filename(destination_file_name)
     df_train = pd.read_csv('train.csv')
         # hyperparameters
-    bucket_name = 'hyperparameters'
     source_blob_name = pitch_type + '/params.json'
     bucket = storage_client.get_bucket(bucket_name)
     blob = bucket.blob(source_blob_name)
@@ -50,7 +50,6 @@ def run(argv=None):
     trained_model.save_model(model_filename)
 
     # upload model to GCS
-    bucket_name = 'xgb-models'
     destination_blob_name = pitch_type + '/model.bst'
     source_file_name = 'model.bst'
 

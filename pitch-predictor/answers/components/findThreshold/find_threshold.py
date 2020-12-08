@@ -6,6 +6,7 @@ import googleapiclient.discovery
 import logging
 import numpy as np
 import pandas as pd
+import os
 
 from sklearn.metrics import f1_score
 
@@ -58,7 +59,7 @@ def run(argv=None):
 
     # download the  data
     storage_client = storage.Client()
-    bucket_name = 'train-test-val'
+    bucket_name = '{{ GCP_PROJECT }}-pitch-data'
         # val
     source_blob_name = pitch_type + '/val.csv'
     destination_file_name = 'val.csv'
@@ -72,7 +73,7 @@ def run(argv=None):
     # define the service
     service = googleapiclient.discovery.build('ml', 'v1')
     # define the model
-    name = 'projects/ross-kubeflow/models/{}'.format(MODEL_NAME)
+    name = f'projects/{{ GCP_PROJECT }}/models/{MODEL_NAME}'
 
     # define validation data and labels
     val_labels = df_val[pitch_type].values.tolist()
@@ -98,7 +99,6 @@ def run(argv=None):
     threshold = returnThreshold(val_preds, val_labels)
 
     # upload the threshold value to GCS
-    bucket_name = 'thresholds'
     destination_blob_name = pitch_type + '/threshold.txt'
 
 

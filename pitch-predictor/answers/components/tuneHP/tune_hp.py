@@ -5,6 +5,7 @@ import json
 import logging
 import numpy as np
 import pandas as pd
+import os
 
 from hyperopt import STATUS_OK
 from hyperopt import hp
@@ -16,13 +17,15 @@ import xgboost as xgb
 
 from sklearn.metrics import roc_auc_score
 
-
+def convert(o):
+    if isinstance(o, np.generic): return o.item()  
+    raise TypeError
 
 def run(argv=None):
     parser = argparse.ArgumentParser()
     parser.add_argument('--pitch_type', dest='pitch_type', default='SI', help='Select the pitch type to evaluate')
     '''
-    parser.add_argument('--project', dest='project', default='ross-kubeflow', help='Select the gcp project to run this job')
+    parser.add_argument('--project', dest='project', default='{{ GCP_PROJECT }}', help='Select the gcp project to run this job')
     parser.add_argument('--staging_location', dest='staging_location', default='gs://dataflow-holding/dataflow_stage/', help='Select the staging location for this job')
     parser.add_argument('--temp_location', dest='temp_location', default='gs://dataflow-holding/dataflow_tmp/', help='Select the temp location for this job')
     parser.add_argument('--setup_file', dest='setup_file', default='/root/setup.py', help='Config options for the pipeline')
@@ -51,7 +54,7 @@ def run(argv=None):
 
     # download the  data
     storage_client = storage.Client()
-    bucket_name = 'train-test-val'
+    bucket_name = '{{ GCP_PROJECT }}-pitch-data'
 
         # train
     source_blob_name = pitch_type + '/train.csv'
@@ -100,9 +103,8 @@ def run(argv=None):
     best_params = fmin(fn = objective, space = space, algo = tpe.suggest, max_evals = MAX_EVALS, trials = bayes_trials)
 
     # push params to cloud storage
-    best_params_dump = json.dumps(best_params)
+    best_params_dump = json.dumps(best_params, default=convert)
 
-    bucket_name = 'hyperparameters'
     destination_blob_name = pitch_type + '/params.json'
 
 

@@ -1,8 +1,12 @@
 FROM google/cloud-sdk:latest
-RUN pip install pandas_gbq
-RUN pip install google-cloud-storage
 
-COPY ./ /root/
+RUN pip3 install --upgrade pip
 
-RUN chmod 777 -R /root
-ENTRYPOINT [ "python", "/root/feature_eng.py" ]
+COPY requirements.txt .
+RUN pip3 install -r requirements.txt
+
+WORKDIR /root
+
+COPY . .
+
+ENTRYPOINT [ "python3", "feature_eng.py" ]

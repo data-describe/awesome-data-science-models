@@ -1,12 +1,14 @@
 FROM google/cloud-sdk:latest
-RUN pip install pandas
-RUN pip install google-cloud-storage
-RUN pip install numpy
-RUN pip install joblib
-RUN pip install sklearn
 
+RUN pip3 install --upgrade pip
 
-COPY ./ /root/
+RUN pip3 install pandas
+RUN pip3 install google-cloud-storage
+RUN pip3 install numpy
+RUN pip3 install joblib
+RUN pip3 install sklearn
 
-RUN chmod 777 -R /root
-ENTRYPOINT [ "python", "/root/train_rf.py" ]
+WORKDIR /root
+COPY . .
+
+ENTRYPOINT [ "python3", "train_rf.py" ]

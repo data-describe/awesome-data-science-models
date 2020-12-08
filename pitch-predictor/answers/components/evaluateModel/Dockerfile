@@ -1,11 +1,11 @@
 FROM google/cloud-sdk:latest
-RUN pip install pandas
-RUN pip install google-cloud-storage
-RUN pip install google-api-python-client
-RUN pip install sklearn
-RUN pip install pandas_gbq
 
-COPY ./ /root/
+RUN pip3 install --upgrade pip
 
-RUN chmod 777 -R /root
-ENTRYPOINT [ "python", "/root/evaluate_model.py" ]
+COPY requirements.txt .
+RUN pip3 install -r requirements.txt
+
+WORKDIR /root
+COPY . .
+
+ENTRYPOINT [ "python3", "evaluate_model.py" ]

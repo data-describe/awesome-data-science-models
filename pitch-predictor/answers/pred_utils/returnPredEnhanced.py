@@ -7,7 +7,7 @@ def returnPredEnhanced(pitch_data):
     
 
     MODEL_NAME = 'RFensemble' 
-    name = 'projects/ross-kubeflow/models/{}'.format(MODEL_NAME)
+    name = 'projects/{{ GCP_PROJECT }}/models/{}'.format(MODEL_NAME)
 
     response = service.projects().predict(
             name=name,

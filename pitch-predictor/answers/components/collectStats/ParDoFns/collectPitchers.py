@@ -3,20 +3,19 @@ import apache_beam as beam
 class collectPitchers(beam.DoFn):
 
     def process(self, row):
+        import apache_beam as beam
+        import re
         from bs4 import BeautifulSoup
         import requests
 
-        game_url = 'http://www.brooksbaseball.net/pfxVB/pfx.php?month=' + row.month + '&day=' + row.day + '&year=' + row.year + '&game=' + row.game_id + '%2F&prevDate=827&league=mlb'
-        game_request = requests.get(game_url)
-        game_soup = BeautifulSoup(game_request.text, features="lxml")
+        mlb_url = f'https://www.mlb.com/stats/pitching/{row.year}?page='
+        for page in range(1, 5):
+            mlb_request = requests.get(mlb_url + str(page))
+            mlb_soup = BeautifulSoup(mlb_request.text, features="html.parser")
 
-
-
-        for j in range(0, len(game_soup.find_all('select'))):
-            if game_soup.find_all('select')[j].get('name') == 'pitchSel': # scroll through the game's pitchers
-                for pitcher_opt in game_soup.find_all('select')[j].find_all('option'):
-                    pitcher_id = pitcher_opt.get('value')
-
+            id_links = mlb_soup.find_all('a', {'class': 'bui-link'})
+            for link in id_links:
+                if re.match(r"/player/\d+", link['href']):
+                    pitcher_id = link['href'].split("/")[-1]
                     row.pitcher_id = pitcher_id
-
                     yield row
