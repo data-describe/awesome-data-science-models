@@ -29,12 +29,12 @@ Create an instance for AI Platform notebooks:
     - Click Open JupyterLab
     - Use the Launcher (right-hand-side of screen) to open a Terminal...
 2. Install data describe:
-     - pip install data-describe[all] #[1]
-     - pip install xgboost==0.90
+     - pip install data-describe[all]
+     - pip install xgboost==0.82
      - pip install pandas_gbq
-     - pip install google-cloud-bigquery-storage
+     - pip install google-cloud-bigquery
+     - pip install google-cloud-storage
 
-[1]: Available Nov 1 2020 meanwhile email brianhray@gmail.com to request access
 
 
 Clone the examples:
