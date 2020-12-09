@@ -14,7 +14,7 @@ They all use [data⎰describe](https://github.com/data-describe/data-describe) o
 | 202 | Taxi Cab Prediction | A wide and deep neural net   implemented using Tensorflow predict trip duration for Chicago taxi rides. | Data Scientists, Data Engineers |
 | 203 | Black Friday | Recommending product categories   with multi-class categorization in AI Platform with custom prediction   routines, custom hyperparameter tuning | Data Scientists, Data Engineers |
 | 302 | Cellular Imaging | Recursion Cellular Image   Classification with AI-Platform with TF2, TPU, and advanced Engineering | Data Scientists, Data Engineers,   HCLS |
-| 401 | IOT Signal processing  | Processing Streaming data with   signal windowing and live prediction using AI Platform and GCP | MLOps, Advanced Data Scientists |
+| 401 | NASA IOT Signal processing  | Processing Streaming data with signal windowing and live prediction using AI Platform and GCP | MLOps, Advanced Data Scientists |
 
 
 ## install instructions
@@ -62,3 +62,7 @@ The original dataset is made public by LendingClub, and can be found at their we
 
 ### Cellular Image
 The original data is part of the tensorflow datasets. We have copied this data into a public bucket for the demo [here](https://console.cloud.google.com/storage/browser/temp_data_bukcet).
+
+### Nasa IOT Data
+J. Lee, H. Qiu, G. Yu, J. Lin, and Rexnord Technical Services (2007). IMS, University of Cincinnati. "Bearing Data Set", NASA Ames Prognostics Data Repository (http://ti.arc.nasa.gov/project/prognostic-data-repository), NASA Ames Research Center, Moffett Field, CA
+
