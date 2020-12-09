@@ -1,4 +1,5 @@
 import os
+import datetime
 from func_components import load_raw_data
 from func_components import split_data
 from func_components import disp_loss
@@ -39,8 +40,8 @@ disp_loss_op = func_to_container_op(
 
 def datadescribe_op(gcs_root, filepath):
     return kfp.dsl.ContainerOp(
-        name='Run_Data_Decsribe',
-        image = 'gcr.io/mwpmltr/rrusson_kubeflow_datadescribe:v1',
+        name='Run_Data_Describe',
+        image = DD_IMAGE,
         arguments=[
             '--gcs_root', gcs_root,
             '--file', filepath
@@ -59,7 +60,7 @@ def pipeline_run(project_id,
                  prefix,
                  dest_bucket_name,
                  dest_file_name,
-                 gcs_root="gs://rrusson-kubeflow-test",
+                 gcs_root,
                  dataset_location='US'):
     
     # Read in the raw sensor data from the public dataset and load in the project bucket
@@ -92,7 +93,8 @@ def pipeline_run(project_id,
     train_model = caip_train_op(project_id,
                                 region=region,
                                 master_image_uri=TRAINER_IMAGE,
-                                job_id_prefix='anomaly-detection_',
+                                python_version="3.7",
+                                job_id_prefix=f'anomaly-detection-{datetime.datetime.now().strftime("%H%M%S")}_',
                                 job_dir=job_dir,
                                 args=train_args)
     
