@@ -98,7 +98,7 @@ def evaluate_model_op(pitch_type, dummy1=None):
 def sequential_pipeline():  
     """A pipeline with sequential steps.""" 
     
-    refresh_data_pipeline = feature_eng_op().after(collect_stats_op())
+    refresh_data_pipeline = feature_eng_op() #.after(collect_stats_op())
 
     FT_task = evaluate_model_op('FT').after(find_threshold_op('FT').after(host_xgboost_op('FT').after(train_xgboost_op('FT').after(tune_hp_op('FT').after(train_test_val_op('FT').after(refresh_data_pipeline)))))) 
     
