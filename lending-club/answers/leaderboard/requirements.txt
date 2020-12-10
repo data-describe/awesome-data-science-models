@@ -1,0 +1,6 @@
+pandas>=1.0
+pandas-gbq>=0.13.0
+fsspec>=0.8
+flask>=1.0
+scikit-learn>=0.23
+gcsfs>=0.6.0
