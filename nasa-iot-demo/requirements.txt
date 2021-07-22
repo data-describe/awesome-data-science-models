@@ -1,2 +1,4 @@
 kfp>=1.0,<1.1
 jinja2
+flake8
+black
