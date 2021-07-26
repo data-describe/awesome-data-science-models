@@ -3,6 +3,7 @@
 import os
 from typing import NamedTuple
 from kfp.v2.dsl import component
+import kfp
 
 BASE_IMAGE = os.getenv('BASE_IMAGE')
 
@@ -134,3 +135,48 @@ def disp_loss(job_id: str) -> str:
         f.write(json_string) 
         
     return job_id
+
+
+@component(output_component_file="vertex_custom_job.yaml", base_image=BASE_IMAGE)
+def vertex_custom_job(
+    project: str,
+    display_name: str,
+    container_image_uri: str,
+    train_args: list,
+    location: str = "us-central1",
+    api_endpoint: str = "us-central1-aiplatform.googleapis.com",
+    machine_type: str = "n1-standard-4",
+    accelerator_type: str = None,
+    accelerator_count: int = 1,
+) -> str:
+
+    from google.cloud import aiplatform
+
+    # The AI Platform services require regional API endpoints.
+    client_options = {"api_endpoint": api_endpoint}
+    # Initialize client that will be used to create and send requests.
+    # This client only needs to be created once, and can be reused for multiple requests.
+    client = aiplatform.gapic.JobServiceClient(client_options=client_options)
+    custom_job = {
+        "display_name": display_name,
+        "job_spec": {
+            "worker_pool_specs": [
+                {
+                    "machine_spec": {
+                        "machine_type": machine_type,
+                        "accelerator_type": accelerator_type,
+                        "accelerator_count": accelerator_count,
+                    },
+                    "replica_count": 1,
+                    "container_spec": {
+                        "image_uri": container_image_uri,
+                        "command": [],
+                        "args": train_args,
+                    },
+                }
+            ]
+        },
+    }
+    parent = f"projects/{project}/locations/{location}"
+    response = client.create_custom_job(parent=parent, custom_job=custom_job)
+    print("response:", response)
