@@ -142,7 +142,7 @@ def vertex_custom_job(
     project: str,
     display_name: str,
     container_image_uri: str,
-    train_args: list,
+    train_args: str,
     location: str = "us-central1",
     api_endpoint: str = "us-central1-aiplatform.googleapis.com",
     machine_type: str = "n1-standard-4",
@@ -151,12 +151,16 @@ def vertex_custom_job(
 ) -> str:
 
     from google.cloud import aiplatform
+    import json
 
     # The AI Platform services require regional API endpoints.
     client_options = {"api_endpoint": api_endpoint}
     # Initialize client that will be used to create and send requests.
     # This client only needs to be created once, and can be reused for multiple requests.
     client = aiplatform.gapic.JobServiceClient(client_options=client_options)
+
+    train_args = json.loads(train_args)
+
     custom_job = {
         "display_name": display_name,
         "job_spec": {
