@@ -147,7 +147,7 @@ def vertex_custom_job(
     api_endpoint: str = "us-central1-aiplatform.googleapis.com",
     machine_type: str = "n1-standard-4",
     accelerator_type: str = None,
-    accelerator_count: int = 1,
+    accelerator_count: int = None,
 ) -> str:
 
     from google.cloud import aiplatform
@@ -184,3 +184,22 @@ def vertex_custom_job(
     parent = f"projects/{project}/locations/{location}"
     response = client.create_custom_job(parent=parent, custom_job=custom_job)
     print("response:", response)
+    return response
+
+
+# For testing
+if __name__ == "__main__":
+    import json
+
+    train_args = json.dumps([
+        "--bucket", "rrusson-bucket",
+        "--train_file", "train_481.013178969.csv",
+        "--test_file", "test_481.013187969.csv"
+    ])
+
+    vertex_custom_job(
+        "mwpmltr",
+        "nasa-iot-submission-test",
+        "gcr.io/mwpmltr/nasa-iot-trainer:v5",
+        train_args, 
+    )
