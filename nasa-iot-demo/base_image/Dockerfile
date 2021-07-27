@@ -1,2 +1,2 @@
-FROM gcr.io/deeplearning-platform-release/base-cpu
-RUN pip install -U fire scikit-learn==0.20.4 pandas==0.24.2 kfp==0.2.5
+FROM gcr.io/deeplearning-platform-release/base-cpu:m75
+RUN pip install -U fire kfp==1.6.6 google_cloud_aiplatform==1.1.1
