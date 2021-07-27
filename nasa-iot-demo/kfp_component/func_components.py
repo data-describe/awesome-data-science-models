@@ -43,17 +43,12 @@ def load_raw_data(source_bucket_name: str,
     merged_data = merged_data.sort_index()
     
     # Drop the raw_data into a bucket
-    #DEST_FILE_NAME = "raw_data.csv"
-    #DEST_BUCKET_NAME = "rrusson-kubeflow-test"
     f = StringIO()
     merged_data.to_csv(f)
     f.seek(0)
     client.get_bucket(dest_bucket_name).blob(dest_file_name).upload_from_file(f, content_type='text/csv')
     
     return (dest_bucket_name, dest_file_name)
-
-## FOR TESTING ##
-#load_raw_data('', source_bucket_name='amazing-public-data', prefix='bearing_sensor_data/bearing_sensor_data/', dest_bucket_name='rrusson-kubeflow-test', dest_file_name='raw_data.csv')
 
 
 @component(output_component_file="split_data.yaml", base_image=BASE_IMAGE)
@@ -117,26 +112,6 @@ def split_data(bucket_name: str,
     return (bucket_name, train_dest_file, test_dest_file)
 
 
-@component(output_component_file="disp_loss.yaml", base_image=BASE_IMAGE)
-def disp_loss(job_id: str) -> str:
-    
-    import json
-    
-    metadata = {
-        'outputs' : [{
-        'type': 'web-app',
-        'storage': 'inline',
-        'source': '<h1>Hello, World!</h1>',
-        }]
-    }
-    
-    with open('/mlpipeline-ui-metadata.json', 'w') as f: 
-        json_string = json.dumps(metadata)
-        f.write(json_string) 
-        
-    return job_id
-
-
 @component(output_component_file="vertex_custom_job.yaml", base_image=BASE_IMAGE)
 def vertex_custom_job(
     project: str,
@@ -147,8 +122,8 @@ def vertex_custom_job(
     api_endpoint: str = "us-central1-aiplatform.googleapis.com",
     machine_type: str = "n1-standard-4",
     accelerator_type: str = None,
-    accelerator_count: int = None,
-) -> str:
+    accelerator_count: int = None) -> NamedTuple('Outputs', [('job_id', str),
+                                                             ('display_name', str)]):
 
     from google.cloud import aiplatform
     import json
@@ -184,7 +159,11 @@ def vertex_custom_job(
     parent = f"projects/{project}/locations/{location}"
     response = client.create_custom_job(parent=parent, custom_job=custom_job)
     print("response:", response)
-    return response
+
+    job_id = str(response.name).split("/")[-1]
+    display_name = str(response.display_name)
+
+    return (job_id, display_name)
 
 
 # For testing
@@ -194,12 +173,16 @@ if __name__ == "__main__":
     train_args = json.dumps([
         "--bucket", "rrusson-bucket",
         "--train_file", "train_481.013178969.csv",
-        "--test_file", "test_481.013187969.csv"
+        "--test_file", "test_481.013187969.csv",
+        "--job_dir", "gs://rrusson-bucket",
     ])
 
-    vertex_custom_job(
+    job_id, display_name = vertex_custom_job(
         "mwpmltr",
         "nasa-iot-submission-test",
         "gcr.io/mwpmltr/nasa-iot-trainer:v5",
         train_args, 
     )
+
+    print(job_id)
+    print(display_name)
