@@ -107,3 +107,4 @@ venv.bak/
 .DS_Store
 
 beatles-automl/answers/file_out_2495_tags.csv
+.vscode/settings.json

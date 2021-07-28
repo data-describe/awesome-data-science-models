@@ -1,8 +1,14 @@
 """Helper components."""
 
+import os
 from typing import NamedTuple
+from kfp.v2.dsl import component
+import kfp
+
+BASE_IMAGE = os.getenv('BASE_IMAGE', "gcr.io/mwpmltr/nasa-iot-base:v1")
 
 
+@component(output_component_file="load_raw_data.yaml", base_image=BASE_IMAGE)
 def load_raw_data(source_bucket_name: str, 
                   prefix: str,
                   dest_bucket_name: str,
@@ -34,8 +40,6 @@ def load_raw_data(source_bucket_name: str,
     merged_data = merged_data.sort_index()
     
     # Drop the raw_data into a bucket
-    #DEST_FILE_NAME = "raw_data.csv"
-    #DEST_BUCKET_NAME = "rrusson-kubeflow-test"
     f = StringIO()
     merged_data.to_csv(f)
     f.seek(0)
@@ -43,10 +47,8 @@ def load_raw_data(source_bucket_name: str,
     
     return (dest_bucket_name, dest_file_name)
 
-## FOR TESTING ##
-#load_raw_data('', source_bucket_name='amazing-public-data', prefix='bearing_sensor_data/bearing_sensor_data/', dest_bucket_name='rrusson-kubeflow-test', dest_file_name='raw_data.csv')
 
-
+@component(output_component_file="split_data.yaml", base_image=BASE_IMAGE)
 def split_data(bucket_name: str, 
                source_file: str,
                split_time: str, 
@@ -107,20 +109,77 @@ def split_data(bucket_name: str,
     return (bucket_name, train_dest_file, test_dest_file)
 
 
-def disp_loss(job_id: str) -> str:
-    
+@component(output_component_file="vertex_custom_job.yaml", base_image=BASE_IMAGE)
+def vertex_custom_job(
+    project: str,
+    display_name: str,
+    container_image_uri: str,
+    train_args: str,
+    location: str = "us-central1",
+    api_endpoint: str = "us-central1-aiplatform.googleapis.com",
+    machine_type: str = "n1-standard-4",
+    accelerator_type: str = None,
+    accelerator_count: int = None) -> NamedTuple('Outputs', [('job_id', str),
+                                                             ('display_name', str)]):
+
+    from google.cloud import aiplatform
     import json
-    
-    metadata = {
-        'outputs' : [{
-        'type': 'web-app',
-        'storage': 'inline',
-        'source': '<h1>Hello, World!</h1>',
-        }]
+
+    # The AI Platform services require regional API endpoints.
+    client_options = {"api_endpoint": api_endpoint}
+    # Initialize client that will be used to create and send requests.
+    # This client only needs to be created once, and can be reused for multiple requests.
+    client = aiplatform.gapic.JobServiceClient(client_options=client_options)
+
+    train_args = json.loads(train_args)
+
+    custom_job = {
+        "display_name": display_name,
+        "job_spec": {
+            "worker_pool_specs": [
+                {
+                    "machine_spec": {
+                        "machine_type": machine_type,
+                        "accelerator_type": accelerator_type,
+                        "accelerator_count": accelerator_count,
+                    },
+                    "replica_count": 1,
+                    "container_spec": {
+                        "image_uri": container_image_uri,
+                        "command": [],
+                        "args": train_args,
+                    },
+                }
+            ]
+        },
     }
-    
-    with open('/mlpipeline-ui-metadata.json', 'w') as f: 
-        json_string = json.dumps(metadata)
-        f.write(json_string) 
-        
-    return job_id
+    parent = f"projects/{project}/locations/{location}"
+    response = client.create_custom_job(parent=parent, custom_job=custom_job)
+    print("response:", response)
+
+    job_id = str(response.name).split("/")[-1]
+    display_name = str(response.display_name)
+
+    return (job_id, display_name)
+
+
+# For testing
+if __name__ == "__main__":
+    import json
+
+    train_args = json.dumps([
+        "--bucket", "rrusson-bucket",
+        "--train_file", "train_481.013178969.csv",
+        "--test_file", "test_481.013187969.csv",
+        "--job_dir", "gs://rrusson-bucket",
+    ])
+
+    job_id, display_name = vertex_custom_job(
+        "mwpmltr",
+        "nasa-iot-submission-test",
+        "gcr.io/mwpmltr/nasa-iot-trainer:v5",
+        train_args, 
+    )
+
+    print(job_id)
+    print(display_name)
