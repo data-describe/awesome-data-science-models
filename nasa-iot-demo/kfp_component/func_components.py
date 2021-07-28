@@ -5,10 +5,7 @@ from typing import NamedTuple
 from kfp.v2.dsl import component
 import kfp
 
-BASE_IMAGE = os.getenv('BASE_IMAGE')
-
-if not BASE_IMAGE:
-    BASE_IMAGE = ""
+BASE_IMAGE = os.getenv('BASE_IMAGE', "gcr.io/mwpmltr/nasa-iot-base:v1")
 
 
 @component(output_component_file="load_raw_data.yaml", base_image=BASE_IMAGE)
