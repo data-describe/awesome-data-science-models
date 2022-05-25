@@ -3,7 +3,7 @@
 Data for use on Machine Learning Model to predict those who will listen The Beatles based on other artists. There are two data sets of importance:
 
 * [file_out_2495.csv](./answers/file_out_2495.csv) a list of users who listened to at least 1 of the most 300 played artists. The columns are the play counts for each artists mentioned. The target is "Likes the Beatles"
-* [file_out_2495_tags.csv](./answers/file_out_2495_tags.csv) Same a above but with also a count of the genre distribution. 
+* [file_out_2495_tags.csv](./answers/file_out_2495_tags.csv) Same as above but with also a count of the genre distribution. 
 
 
 Instructions to re-generate w/ tags:
