@@ -2,17 +2,16 @@ import os
 import pickle
 
 import numpy as np
-import keras
+import tensorflow.keras as keras
 
 
 class MyPredictor(object):
     """An example Predictor for an AI Platform custom prediction routine."""
 
-    def __init__(self, model): #, preprocessor
-        """Stores artifacts for prediction. Only initialized via `from_path`.
-        """
+    def __init__(self, model):  # , preprocessor
+        """Stores artifacts for prediction. Only initialized via `from_path`."""
         self._model = model
-        #self._preprocessor = preprocessor
+        # self._preprocessor = preprocessor
 
     def predict(self, instances, **kwargs):
         """Performs custom prediction.
@@ -28,17 +27,14 @@ class MyPredictor(object):
         Returns:
             A list of outputs containing the prediction results.
         """
-        
-        
-        #inputs = instances['input']
-        #preprocessed_inputs = self._preprocessor.preprocess(inputs)
 
-        outputs = self._model.predict(instances[0]['input'])
+        # inputs = instances['input']
+        # preprocessed_inputs = self._preprocessor.preprocess(inputs)
+
+        outputs = self._model.predict(instances[0]["input"])
         logval = outputs.tolist()[0][0]
         transformedval = np.exp(logval)
         return str(transformedval)
-
-        
 
     @classmethod
     def from_path(cls, model_dir):
@@ -56,7 +52,7 @@ class MyPredictor(object):
         Returns:
             An instance of `MyPredictor`.
         """
-        model_path = os.path.join(model_dir, 'census.hdf5')
+        model_path = os.path.join(model_dir, "census.hdf5")
         model = keras.models.load_model(model_path)
 
         """
@@ -65,4 +61,4 @@ class MyPredictor(object):
             preprocessor = pickle.load(f)
         """
 
-        return cls(model) #, preprocessor
+        return cls(model)  # , preprocessor

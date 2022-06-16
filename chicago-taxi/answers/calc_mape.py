@@ -72,17 +72,17 @@ if __name__=='__main__':
         input_sample = {}
         input_sample['input'] = sample[0]
     
-    
-        
-        actual = int(round(np.exp(sample[1])))
+        actual = int(np.round(np.exp(sample[1])))
         actuals.append(actual)
 
         with open('input_sample.json', 'w') as outfile:
             json.dump(input_sample, outfile, cls=NumpyEncoder)
             
-        command = "gcloud ai-platform predict --model={} --version={} --json-instances=input_sample.json".format(args.model, args.version)
+        command = "gcloud ai-platform predict --region global --model={} --version={} --json-instances=input_sample.json".format(args.model, args.version)
         output = subprocess.check_output(shlex.split(command))
         output_json = json.loads(output)
+
+        print(output_json)
         
         pred = int(round(eval(output_json['predictions'])))
         preds.append(pred)
