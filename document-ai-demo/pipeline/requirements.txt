@@ -1,0 +1,6 @@
+kfp==1.8.12
+google-cloud-storage==1.44.0
+google-cloud-aiplatform==1.13.0
+google-cloud-documentai==1.4.1
+scikit-learn==1.0.2
+black==22.3.0
