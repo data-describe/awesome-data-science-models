@@ -1,0 +1,10 @@
+functions-framework==3.0.0
+flask==2.1.0
+google-cloud-error-reporting==1.5.2
+pandas
+scikit-learn
+google-cloud-core==1.6.0
+google-cloud-documentai==1.2.0
+google-cloud-storage==1.36.2
+google-cloud-firestore
+simplejson
