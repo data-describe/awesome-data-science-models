@@ -1,8 +1,0 @@
-# set the value to the following placeholders
-
-PROJECT_ID=mwpmltr 
-REGION=us-central1  
-REPOSITORY=black-friday 
-IMAGE=black-friday-image 
-
-docker build --tag=$REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE .
