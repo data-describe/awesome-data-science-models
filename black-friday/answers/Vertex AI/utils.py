@@ -226,8 +226,8 @@ def create_data(
     )
 
     # Limit data size for demo purposes.
-    train_sql += "\nLIMIT 1001"
-    test_sql += "\nLIMIT 1000"
+    # train_sql += "\nLIMIT 1001"
+    # test_sql += "\nLIMIT 1000"
 
     train_df = pandas_gbq.read_gbq(train_sql, project_id=project_id)
     test_df = pandas_gbq.read_gbq(test_sql, project_id=project_id)
@@ -341,7 +341,7 @@ def train_model(
                     total_correct += 1
 
             accuracy = total_correct / total_preds
-            metrics[f"iteraion_{i}_accuracy"] = accuracy
+            metrics[f"iteration_{i}_accuracy"] = accuracy
 
             # determine whether to update parameters
             if accuracy > best_accuracy:
