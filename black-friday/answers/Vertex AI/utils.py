@@ -1,4 +1,8 @@
-from typing import Optional
+from typing import Dict, List, Union, Optional
+
+from google.cloud import aiplatform
+from google.protobuf import json_format
+from google.protobuf.struct_pb2 import Value
 from kfp.v2.dsl import (
     Artifact,
     Dataset,
@@ -19,6 +23,7 @@ def create_data(
     project_id: str,
     bucket_name: str,
     dataset_id: str,
+    use_demographic: bool,
     train_file_x: OutputPath("csv"),
     train_file_y: OutputPath("csv"),
     test_file_x: OutputPath("csv"),
@@ -103,7 +108,15 @@ def create_data(
         return user_cat_vector
 
     def produce_features(
-        df, cat_1s, cat_2s, cat_3s, occupations, city_cats, datapart, bucket
+        df,
+        cat_1s,
+        cat_2s,
+        cat_3s,
+        occupations,
+        city_cats,
+        datapart,
+        bucket,
+        use_demographic,
     ):
         x_rows = []
         y_rows = []
@@ -128,7 +141,9 @@ def create_data(
             stay = df_part_x["Stay_In_Current_City_Years"][first_valid_index]
             marital = df_part_x["Marital_Status"][first_valid_index]
 
-            continuous_features = [gender, age, stay, marital]
+            continuous_features = []
+            if use_demographic is True:
+                continuous_features = [gender, age, stay, marital]
 
             # combine the continuous and categorial
             x_row = continuous_features + user_cat_vector
@@ -250,6 +265,7 @@ def create_data(
         city_cats=city_cats,
         datapart="train",
         bucket=bucket,
+        use_demographic=use_demographic,
     )
     logging.info("Generating test set.")
     produce_features(
@@ -261,6 +277,7 @@ def create_data(
         city_cats=city_cats,
         datapart="test",
         bucket=bucket,
+        use_demographic=use_demographic,
     )
 
 
@@ -280,6 +297,7 @@ def train_model(
     metrics_file: OutputPath("json"),
     model_file: Output[Model],
     num_iterations: Optional[int] = 2,
+    best_params: Optional[dict] = None,
 ) -> None:
 
     from google.cloud import storage
@@ -325,6 +343,8 @@ def train_model(
                 min_samples_split=min_samples_split,
                 min_samples_leaf=min_samples_leaf,
                 max_features=max_features,
+                random_state=15,
+                n_jobs=-1,
             )
             rf_model.fit(x_train, y_train)
 
@@ -362,25 +382,17 @@ def train_model(
                     "max_features": best_max_features,
                 }
                 # write parameters to disk
-        logging.info(f"Best accuracy found at iteration: {i}")
 
-        print(f"BEST PARAMS: {best_params}")
         with open(best_params_file + ".json", "w") as f:
             json.dump(best_params, f)
 
         logging.info(
-            "Completed hp tuning interation {}, best accuracy {} with params {}".format(
+            "Completed hp tuning iteration {}, best accuracy {} with params {}".format(
                 str(i + 1), str(best_accuracy), best_params
             )
         )
 
     else:
-        # download turning parameters from cloud storage
-        blob = bucket.blob(best_params_file + ".json")
-        blob.download_to_filename(best_params_file + ".json")
-
-        with open(best_params_file + ".json") as json_file:
-            best_params = json.load(json_file)
 
         logging.info("Parameters loaded {}".format(str(best_params)))
 
@@ -392,6 +404,8 @@ def train_model(
         min_samples_split=best_params["min_samples_split"],
         min_samples_leaf=best_params["min_samples_leaf"],
         max_features=best_params["max_features"],
+        random_state=15,
+        n_jobs=-1,
     )
     rf_model.fit(x_train_df, y_train_df)
 

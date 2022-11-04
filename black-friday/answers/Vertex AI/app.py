@@ -12,21 +12,10 @@ model = pickle.load(open("model.pkl", "rb"))
 @app.route("/predict", methods=["POST", "GET"])
 def predict():
     data = request.get_json(force=True)["instances"]
-
-    prediction = model.predict([data]).tolist()[0]
+    pred = model.predict([data]).tolist()[0]
     product_1_cat = pred.index(max(pred)) + 1
-
-    # postprocessing
-    output = {"predictions": [f'Product Category {product_1_cat}']}
-    print("prediction", output)
+    output = {"predictions": [f"Product Category {product_1_cat}"]}
     return jsonify(output)
-
-
-
-    outputs = self._model.predict(instances)
-    pred = outputs.tolist()[0]
-    product_1_cat = pred.index(max(pred)) + 1
-    return 'Product Category {}'.format(str(product_1_cat))
 
 
 @app.route("/healthz")
