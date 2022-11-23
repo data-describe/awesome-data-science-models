@@ -1,59 +1,42 @@
 # Product Category Suggestions for Black Friday dataset
-Recommending product categories with multi-class categorization in AI Platform
+Recommending product categories with multi-class categorization in Vertex AI
 
 ## Files
 ```
 black-friday
 │   README.md
-│   AI Platform.ipynb
-│   generate_sample.py
-│   requirements.txt
-│   setup.py 
-│   predictor.py
-│   input_sample.json
-│
-└───trainer
-│   │   __init__.py
-│   │   create_data_func.py
-│   │   hp_tuning.py
-│   │   rf_trainer.py
+└───EDA
+│   │   EDA.ipynb
+└───answers/Vertex AI
+│   │   Vertex AI.ipynb
+│   │   Dockerfile
+|   |   requirements.txt
+│   │   app.py
+│   │   utils.py
 ```
-**AI Platform.ipynb** 
+**Vertex AI.ipynb** 
 <br>
-All of the commands necessary to tune, train, and host the model on AI Platform.
+All of the commands necessary to tune, train, and host the model on Vertex AI.
 
-**generate_sample.py**
+**Dockerfile**
 <br>
-A script that can be used to generate a sample for inference.
+A Dockerfile to create a container for hosting the custom prediction routine.
 
 **requirements.txt**
 <br>
 Packages required in order to complete the training in local execution mode.
 
-**setup.py**
+**app.py**
 <br>
-Specifies additional packages that are required for a training job submission to AI Platform.
+The flask API backend code for post processing of predictions.
 
-**predictor.py**
+**utils.py**
 <br>
-Code necessary for implementation of the custom prediction routine.
+Necessary code for processing data, training/tuning models, and feature selection.
 
-**input_sample.json**
+**EDA.ipynb**
 <br>
-Sample preprocessed json object to be passed for inference
-
-**trainer/create_data_func.py**
-<br>
-Logic required to complete preprocessing and generate training and test datasets.  This module is callable as an attribute in trainer/rf_trainer.py.
-
-
-**trainer/hp_tuning.py**
-<br>
-Includes logic necessary to perform hyperparameter tuning on the Random Forest model.  Similar to trainer/create_data_func.py, this module is callable as an attribute in trainer/rf_trainer.py.
-
-**trainer/rf_trainer.py**
-<br>
-Main module responsible for accepting input parameters and executing the training job.
+Notebook for exploratory data analysis.
 
 ## Running Instructions
-Instructions for running the process are outlined in AI Platform.ipynb.
+Instructions for running the process are outlined in Vertex AI.ipynb.
