@@ -1,0 +1,4 @@
+
+pandas
+google-cloud-storage
+xgboost==0.82

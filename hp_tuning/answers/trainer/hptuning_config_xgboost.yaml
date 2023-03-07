@@ -1,0 +1,28 @@
+trainingInput:
+  hyperparameters:
+    goal: MAXIMIZE
+    hyperparameterMetricTag: htune_ROC_AUC1
+    maxTrials: 3
+    maxParallelTrials: 3
+    enableTrialEarlyStopping: True
+    params:
+    - parameterName: class_weight_ratio
+      type: DOUBLE
+      minValue: 1.0
+      maxValue: 4.0
+    - parameterName: learning_rate
+      type: DOUBLE
+      minValue: 0.05
+      maxValue: 0.6
+    - parameterName: max_depth
+      type: INTEGER
+      minValue: 2
+      maxValue: 20
+    - parameterName: num_boost_round
+      type: DISCRETE
+      discreteValues:
+      - 10
+      - 30
+      - 60
+      - 90
+      - 120
