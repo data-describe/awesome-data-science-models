@@ -1,0 +1,7 @@
+kfp>=1.6,<1.7
+google-cloud-aiplatform
+google-cloud-pipeline-components
+jinja2
+flake8
+black
+jupyter

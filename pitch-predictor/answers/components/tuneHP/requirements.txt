@@ -1,0 +1,6 @@
+pandas
+numpy
+google-cloud-storage
+hyperopt
+xgboost==0.82
+sklearn
