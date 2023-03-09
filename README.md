@@ -15,7 +15,7 @@ They all use [data⎰describe](https://github.com/data-describe/data-describe) o
 | 203 | Black Friday | Recommending product categories   with multi-class categorization in AI Platform with custom prediction   routines, custom hyperparameter tuning | Data Scientists, Data Engineers |
 | 302 | Cellular Imaging | Recursion Cellular Image   Classification with AI-Platform with TF2, TPU, and advanced Engineering | Data Scientists, Data Engineers,   HCLS |
 | 401 | NASA IOT Signal processing  | Processing Streaming data with signal windowing and live prediction using AI Platform and GCP | MLOps, Advanced Data Scientists |
-
+|  | Bearing Condition Monitoring | Analyzing the Vibrations and Motor current of Bearings to predict Remaining Useful LifeCycle (RUL) using Vertex AI | Data Scientist, Data Engineers |
 
 ## install instructions
 
@@ -66,3 +66,5 @@ The original data is part of the tensorflow datasets. We have copied this data i
 ### Nasa IOT Data
 J. Lee, H. Qiu, G. Yu, J. Lin, and Rexnord Technical Services (2007). IMS, University of Cincinnati. "Bearing Data Set", NASA Ames Prognostics Data Repository (http://ti.arc.nasa.gov/project/prognostic-data-repository), NASA Ames Research Center, Moffett Field, CA
 
+### Bearing Condition Monitoring
+The original data is a public dataset of the Chair of Design and Drive Technology, Paderborn University. It is licensed under the Creative Commons Attribution-NonCommercial 4.0 International License and it is available for downloading it [here](https://mb.uni-paderborn.de/en/kat/main-research/datacenter/bearing-datacenter/data-sets-and-download)
