@@ -1,5 +1,4 @@
 mat4py==0.5.0
 scipy==1.10.1
-numpy
-pandas
-matplotlib
+tabula==2.7.0
+data-describe
