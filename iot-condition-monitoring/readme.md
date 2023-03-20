@@ -7,6 +7,8 @@ Many plants faces unplanned downtime and it assets fail over the period of time.
 
 ## Paderborn Bearing Dataset 
 
+Dataset - https://mb.uni-paderborn.de/en/kat/main-research/datacenter/bearing-datacenter/data-sets-and-download
+
 ### Experiment Setup
 
 The basic components of the load test bench are the drive motor acting as a sensor, a torque measuring shaft, the test modules and a load motor. Ball or cylindrical roller bearings of type 6203, N203 or NU203 are used in the experiment. The main measured variables for generating the database are the stator current on the drive motor and the housing vibrations in the form of accelerations on the bearing housing in the rolling bearing test module.
@@ -26,7 +28,7 @@ Our dataset of Interest(Paderborn Bearing Dataset) consists the following detail
 2. There are 26 Damaged bearing and 6 healthy bearing state in the data
 3. All the data is collected in 4 different operating conditions.
 
-Dataset - https://mb.uni-paderborn.de/en/kat/main-research/datacenter/bearing-datacenter/data-sets-and-download
+
 
 ## Goal
 
