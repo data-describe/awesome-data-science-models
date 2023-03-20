@@ -1,0 +1,4 @@
+apache-beam[gcp]==2.36.0
+bs4==0.0.1
+nltk==3.7
+tensorflow==2.8.0

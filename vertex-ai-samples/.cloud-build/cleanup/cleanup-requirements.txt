@@ -1,0 +1,2 @@
+ratemate
+google-cloud-aiplatform

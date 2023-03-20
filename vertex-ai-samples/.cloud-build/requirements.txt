@@ -1,0 +1,14 @@
+ipython
+numpy
+jupyter
+nbconvert
+papermill
+pandas
+matplotlib
+tabulate
+google-cloud-aiplatform
+google-cloud-storage
+google-cloud-build
+ratemate
+GitPython
+tqdm

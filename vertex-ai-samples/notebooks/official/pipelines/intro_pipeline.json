@@ -1,0 +1,229 @@
+{
+  "pipelineSpec": {
+    "components": {
+      "comp-consumer": {
+        "executorLabel": "exec-consumer",
+        "inputDefinitions": {
+          "parameters": {
+            "text1": {
+              "type": "STRING"
+            },
+            "text2": {
+              "type": "STRING"
+            },
+            "text3": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "parameters": {
+            "Output": {
+              "type": "STRING"
+            }
+          }
+        }
+      },
+      "comp-hello-world": {
+        "executorLabel": "exec-hello-world",
+        "inputDefinitions": {
+          "parameters": {
+            "text": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "parameters": {
+            "Output": {
+              "type": "STRING"
+            }
+          }
+        }
+      },
+      "comp-two-outputs": {
+        "executorLabel": "exec-two-outputs",
+        "inputDefinitions": {
+          "parameters": {
+            "text": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "parameters": {
+            "output_one": {
+              "type": "STRING"
+            },
+            "output_two": {
+              "type": "STRING"
+            }
+          }
+        }
+      }
+    },
+    "deploymentSpec": {
+      "executors": {
+        "exec-consumer": {
+          "container": {
+            "args": [
+              "--executor_input",
+              "{{$}}",
+              "--function_to_execute",
+              "consumer"
+            ],
+            "command": [
+              "sh",
+              "-c",
+              "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet     --no-warn-script-location 'kfp==1.8.19' && \"$0\" \"$@\"\n",
+              "sh",
+              "-ec",
+              "program_path=$(mktemp -d)\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\npython3 -m kfp.v2.components.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+              "\nimport kfp\nfrom kfp.v2 import dsl\nfrom kfp.v2.dsl import *\nfrom typing import *\n\ndef consumer(text1: str, text2: str, text3: str) -> str:\n    print(f\"text1: {text1}; text2: {text2}; text3: {text3}\")\n    return f\"text1: {text1}; text2: {text2}; text3: {text3}\"\n\n"
+            ],
+            "image": "python:3.7"
+          }
+        },
+        "exec-hello-world": {
+          "container": {
+            "args": [
+              "--executor_input",
+              "{{$}}",
+              "--function_to_execute",
+              "hello_world"
+            ],
+            "command": [
+              "sh",
+              "-c",
+              "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet     --no-warn-script-location 'kfp==1.8.19' && \"$0\" \"$@\"\n",
+              "sh",
+              "-ec",
+              "program_path=$(mktemp -d)\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\npython3 -m kfp.v2.components.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+              "\nimport kfp\nfrom kfp.v2 import dsl\nfrom kfp.v2.dsl import *\nfrom typing import *\n\ndef hello_world(text: str) -> str:\n    print(text)\n    return text\n\n"
+            ],
+            "image": "python:3.9"
+          }
+        },
+        "exec-two-outputs": {
+          "container": {
+            "args": [
+              "--executor_input",
+              "{{$}}",
+              "--function_to_execute",
+              "two_outputs"
+            ],
+            "command": [
+              "sh",
+              "-c",
+              "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet     --no-warn-script-location 'google-cloud-storage' 'kfp==1.8.19' && \"$0\" \"$@\"\n",
+              "sh",
+              "-ec",
+              "program_path=$(mktemp -d)\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\npython3 -m kfp.v2.components.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+              "\nimport kfp\nfrom kfp.v2 import dsl\nfrom kfp.v2.dsl import *\nfrom typing import *\n\ndef two_outputs(\n    text: str,\n) -> NamedTuple(\n    \"Outputs\",\n    [\n        (\"output_one\", str),  # Return parameters\n        (\"output_two\", str),\n    ],\n):\n    # the import is not actually used for this simple example, but the import\n    # is successful, as it was included in the `packages_to_install` list.\n    from google.cloud import storage  # noqa: F401\n\n    o1 = f\"output one from text: {text}\"\n    o2 = f\"output two from text: {text}\"\n    print(\"output one: {}; output_two: {}\".format(o1, o2))\n    return (o1, o2)\n\n"
+            ],
+            "image": "python:3.7"
+          }
+        }
+      }
+    },
+    "pipelineInfo": {
+      "name": "intro-pipeline-unique"
+    },
+    "root": {
+      "dag": {
+        "tasks": {
+          "consumer": {
+            "cachingOptions": {
+              "enableCache": true
+            },
+            "componentRef": {
+              "name": "comp-consumer"
+            },
+            "dependentTasks": [
+              "hello-world",
+              "two-outputs"
+            ],
+            "inputs": {
+              "parameters": {
+                "text1": {
+                  "taskOutputParameter": {
+                    "outputParameterKey": "Output",
+                    "producerTask": "hello-world"
+                  }
+                },
+                "text2": {
+                  "taskOutputParameter": {
+                    "outputParameterKey": "output_one",
+                    "producerTask": "two-outputs"
+                  }
+                },
+                "text3": {
+                  "taskOutputParameter": {
+                    "outputParameterKey": "output_two",
+                    "producerTask": "two-outputs"
+                  }
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "consumer"
+            }
+          },
+          "hello-world": {
+            "cachingOptions": {
+              "enableCache": true
+            },
+            "componentRef": {
+              "name": "comp-hello-world"
+            },
+            "inputs": {
+              "parameters": {
+                "text": {
+                  "componentInputParameter": "text"
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "hello-world"
+            }
+          },
+          "two-outputs": {
+            "cachingOptions": {
+              "enableCache": true
+            },
+            "componentRef": {
+              "name": "comp-two-outputs"
+            },
+            "inputs": {
+              "parameters": {
+                "text": {
+                  "componentInputParameter": "text"
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "two-outputs"
+            }
+          }
+        }
+      },
+      "inputDefinitions": {
+        "parameters": {
+          "text": {
+            "type": "STRING"
+          }
+        }
+      }
+    },
+    "schemaVersion": "2.0.0",
+    "sdkVersion": "kfp-1.8.19"
+  },
+  "runtimeConfig": {
+    "gcsOutputDirectory": "gs://mwpmltraip-0obvksai/pipeline_root/intro",
+    "parameters": {
+      "text": {
+        "stringValue": "hi there"
+      }
+    }
+  }
+}

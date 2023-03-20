@@ -1,0 +1,910 @@
+{
+  "pipelineSpec": {
+    "components": {
+      "comp-automl-tabular-training-job": {
+        "executorLabel": "exec-automl-tabular-training-job",
+        "inputDefinitions": {
+          "artifacts": {
+            "dataset": {
+              "artifactType": {
+                "schemaTitle": "google.VertexDataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          },
+          "parameters": {
+            "budget_milli_node_hours": {
+              "type": "INT"
+            },
+            "column_specs": {
+              "type": "STRING"
+            },
+            "disable_early_stopping": {
+              "type": "STRING"
+            },
+            "display_name": {
+              "type": "STRING"
+            },
+            "export_evaluated_data_items": {
+              "type": "STRING"
+            },
+            "labels": {
+              "type": "STRING"
+            },
+            "location": {
+              "type": "STRING"
+            },
+            "model_display_name": {
+              "type": "STRING"
+            },
+            "optimization_objective": {
+              "type": "STRING"
+            },
+            "optimization_prediction_type": {
+              "type": "STRING"
+            },
+            "project": {
+              "type": "STRING"
+            },
+            "target_column": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "model": {
+              "artifactType": {
+                "schemaTitle": "google.VertexModel",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-classification-model-eval-metrics": {
+        "executorLabel": "exec-classification-model-eval-metrics",
+        "inputDefinitions": {
+          "artifacts": {
+            "model": {
+              "artifactType": {
+                "schemaTitle": "system.Artifact",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "STRING"
+            },
+            "project": {
+              "type": "STRING"
+            },
+            "thresholds_dict_str": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "metrics": {
+              "artifactType": {
+                "schemaTitle": "system.Metrics",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "metricsc": {
+              "artifactType": {
+                "schemaTitle": "system.ClassificationMetrics",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          },
+          "parameters": {
+            "dep_decision": {
+              "type": "STRING"
+            }
+          }
+        }
+      },
+      "comp-condition-deploy-decision-1": {
+        "dag": {
+          "tasks": {
+            "endpoint-create": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-endpoint-create"
+              },
+              "inputs": {
+                "parameters": {
+                  "description": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": ""
+                      }
+                    }
+                  },
+                  "display_name": {
+                    "componentInputParameter": "pipelineparam--ENDPOINT_DISPLAY_NAME"
+                  },
+                  "encryption_spec_key_name": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": ""
+                      }
+                    }
+                  },
+                  "labels": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "{}"
+                      }
+                    }
+                  },
+                  "location": {
+                    "componentInputParameter": "pipelineparam--gcp_region"
+                  },
+                  "network": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": ""
+                      }
+                    }
+                  },
+                  "project": {
+                    "componentInputParameter": "pipelineparam--project"
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "endpoint-create"
+              }
+            },
+            "model-deploy": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-model-deploy"
+              },
+              "dependentTasks": [
+                "endpoint-create"
+              ],
+              "inputs": {
+                "artifacts": {
+                  "endpoint": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "endpoint",
+                      "producerTask": "endpoint-create"
+                    }
+                  },
+                  "model": {
+                    "componentInputArtifact": "pipelineparam--automl-tabular-training-job-model"
+                  }
+                },
+                "parameters": {
+                  "automatic_resources_max_replica_count": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "0"
+                      }
+                    }
+                  },
+                  "automatic_resources_min_replica_count": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "0"
+                      }
+                    }
+                  },
+                  "dedicated_resources_accelerator_count": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "0"
+                      }
+                    }
+                  },
+                  "dedicated_resources_accelerator_type": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": ""
+                      }
+                    }
+                  },
+                  "dedicated_resources_machine_type": {
+                    "componentInputParameter": "pipelineparam--MACHINE_TYPE"
+                  },
+                  "dedicated_resources_max_replica_count": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "1"
+                      }
+                    }
+                  },
+                  "dedicated_resources_min_replica_count": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "1"
+                      }
+                    }
+                  },
+                  "deployed_model_display_name": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": ""
+                      }
+                    }
+                  },
+                  "disable_container_logging": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "0"
+                      }
+                    }
+                  },
+                  "enable_access_logging": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "0"
+                      }
+                    }
+                  },
+                  "explanation_metadata": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "{}"
+                      }
+                    }
+                  },
+                  "explanation_parameters": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "{}"
+                      }
+                    }
+                  },
+                  "service_account": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": ""
+                      }
+                    }
+                  },
+                  "traffic_split": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "{}"
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "model-deploy"
+              }
+            }
+          }
+        },
+        "inputDefinitions": {
+          "artifacts": {
+            "pipelineparam--automl-tabular-training-job-model": {
+              "artifactType": {
+                "schemaTitle": "google.VertexModel",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          },
+          "parameters": {
+            "pipelineparam--ENDPOINT_DISPLAY_NAME": {
+              "type": "STRING"
+            },
+            "pipelineparam--MACHINE_TYPE": {
+              "type": "STRING"
+            },
+            "pipelineparam--classification-model-eval-metrics-dep_decision": {
+              "type": "STRING"
+            },
+            "pipelineparam--gcp_region": {
+              "type": "STRING"
+            },
+            "pipelineparam--project": {
+              "type": "STRING"
+            }
+          }
+        }
+      },
+      "comp-endpoint-create": {
+        "executorLabel": "exec-endpoint-create",
+        "inputDefinitions": {
+          "parameters": {
+            "description": {
+              "type": "STRING"
+            },
+            "display_name": {
+              "type": "STRING"
+            },
+            "encryption_spec_key_name": {
+              "type": "STRING"
+            },
+            "labels": {
+              "type": "STRING"
+            },
+            "location": {
+              "type": "STRING"
+            },
+            "network": {
+              "type": "STRING"
+            },
+            "project": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "endpoint": {
+              "artifactType": {
+                "schemaTitle": "google.VertexEndpoint",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          },
+          "parameters": {
+            "gcp_resources": {
+              "type": "STRING"
+            }
+          }
+        }
+      },
+      "comp-model-deploy": {
+        "executorLabel": "exec-model-deploy",
+        "inputDefinitions": {
+          "artifacts": {
+            "endpoint": {
+              "artifactType": {
+                "schemaTitle": "google.VertexEndpoint",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "model": {
+              "artifactType": {
+                "schemaTitle": "google.VertexModel",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          },
+          "parameters": {
+            "automatic_resources_max_replica_count": {
+              "type": "INT"
+            },
+            "automatic_resources_min_replica_count": {
+              "type": "INT"
+            },
+            "dedicated_resources_accelerator_count": {
+              "type": "INT"
+            },
+            "dedicated_resources_accelerator_type": {
+              "type": "STRING"
+            },
+            "dedicated_resources_machine_type": {
+              "type": "STRING"
+            },
+            "dedicated_resources_max_replica_count": {
+              "type": "INT"
+            },
+            "dedicated_resources_min_replica_count": {
+              "type": "INT"
+            },
+            "deployed_model_display_name": {
+              "type": "STRING"
+            },
+            "disable_container_logging": {
+              "type": "STRING"
+            },
+            "enable_access_logging": {
+              "type": "STRING"
+            },
+            "explanation_metadata": {
+              "type": "STRING"
+            },
+            "explanation_parameters": {
+              "type": "STRING"
+            },
+            "service_account": {
+              "type": "STRING"
+            },
+            "traffic_split": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "parameters": {
+            "gcp_resources": {
+              "type": "STRING"
+            }
+          }
+        }
+      },
+      "comp-tabular-dataset-create": {
+        "executorLabel": "exec-tabular-dataset-create",
+        "inputDefinitions": {
+          "parameters": {
+            "bq_source": {
+              "type": "STRING"
+            },
+            "display_name": {
+              "type": "STRING"
+            },
+            "labels": {
+              "type": "STRING"
+            },
+            "location": {
+              "type": "STRING"
+            },
+            "project": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "dataset": {
+              "artifactType": {
+                "schemaTitle": "google.VertexDataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      }
+    },
+    "deploymentSpec": {
+      "executors": {
+        "exec-automl-tabular-training-job": {
+          "container": {
+            "args": [
+              "--init.project",
+              "{{$.inputs.parameters['project']}}",
+              "--init.location",
+              "{{$.inputs.parameters['location']}}",
+              "--init.display_name",
+              "{{$.inputs.parameters['display_name']}}",
+              "--init.optimization_prediction_type",
+              "{{$.inputs.parameters['optimization_prediction_type']}}",
+              "--method.dataset",
+              "{{$.inputs.artifacts['dataset'].metadata['resourceName']}}",
+              "--method.target_column",
+              "{{$.inputs.parameters['target_column']}}",
+              "--init.optimization_objective",
+              "{{$.inputs.parameters['optimization_objective']}}",
+              "--init.column_specs",
+              "{{$.inputs.parameters['column_specs']}}",
+              "--init.labels",
+              "{{$.inputs.parameters['labels']}}",
+              "--method.budget_milli_node_hours",
+              "{{$.inputs.parameters['budget_milli_node_hours']}}",
+              "--method.model_display_name",
+              "{{$.inputs.parameters['model_display_name']}}",
+              "--method.disable_early_stopping",
+              "{{$.inputs.parameters['disable_early_stopping']}}",
+              "--method.export_evaluated_data_items",
+              "{{$.inputs.parameters['export_evaluated_data_items']}}",
+              "--executor_input",
+              "{{$}}",
+              "--resource_name_output_artifact_uri",
+              "{{$.outputs.artifacts['model'].uri}}"
+            ],
+            "command": [
+              "python3",
+              "-m",
+              "google_cloud_pipeline_components.container.aiplatform.remote_runner",
+              "--cls_name",
+              "AutoMLTabularTrainingJob",
+              "--method_name",
+              "run"
+            ],
+            "image": "gcr.io/ml-pipeline/google-cloud-pipeline-components:1.0.40"
+          }
+        },
+        "exec-classification-model-eval-metrics": {
+          "container": {
+            "args": [
+              "--executor_input",
+              "{{$}}",
+              "--function_to_execute",
+              "classification_model_eval_metrics"
+            ],
+            "command": [
+              "sh",
+              "-c",
+              "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet     --no-warn-script-location 'google-cloud-aiplatform' 'kfp==1.8.19' && \"$0\" \"$@\"\n",
+              "sh",
+              "-ec",
+              "program_path=$(mktemp -d)\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\npython3 -m kfp.v2.components.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+              "\nimport kfp\nfrom kfp.v2 import dsl\nfrom kfp.v2.dsl import *\nfrom typing import *\n\ndef classification_model_eval_metrics(\n    project: str,\n    location: str,\n    thresholds_dict_str: str,\n    model: Input[Artifact],\n    metrics: Output[Metrics],\n    metricsc: Output[ClassificationMetrics],\n) -> NamedTuple(\"Outputs\", [(\"dep_decision\", str)]):  # Return parameter.\n\n    import json\n    import logging\n\n    from google.cloud import aiplatform\n\n    aiplatform.init(project=project)\n\n    # Fetch model eval info\n    def get_eval_info(model):\n        response = model.list_model_evaluations()\n        metrics_list = []\n        metrics_string_list = []\n        for evaluation in response:\n            evaluation = evaluation.to_dict()\n            print(\"model_evaluation\")\n            print(\" name:\", evaluation[\"name\"])\n            print(\" metrics_schema_uri:\", evaluation[\"metricsSchemaUri\"])\n            metrics = evaluation[\"metrics\"]\n            for metric in metrics.keys():\n                logging.info(\"metric: %s, value: %s\", metric, metrics[metric])\n            metrics_str = json.dumps(metrics)\n            metrics_list.append(metrics)\n            metrics_string_list.append(metrics_str)\n\n        return (\n            evaluation[\"name\"],\n            metrics_list,\n            metrics_string_list,\n        )\n\n    # Use the given metrics threshold(s) to determine whether the model is\n    # accurate enough to deploy.\n    def classification_thresholds_check(metrics_dict, thresholds_dict):\n        for k, v in thresholds_dict.items():\n            logging.info(\"k {}, v {}\".format(k, v))\n            if k in [\"auRoc\", \"auPrc\"]:  # higher is better\n                if metrics_dict[k] < v:  # if under threshold, don't deploy\n                    logging.info(\"{} < {}; returning False\".format(metrics_dict[k], v))\n                    return False\n        logging.info(\"threshold checks passed.\")\n        return True\n\n    def log_metrics(metrics_list, metricsc):\n        test_confusion_matrix = metrics_list[0][\"confusionMatrix\"]\n        logging.info(\"rows: %s\", test_confusion_matrix[\"rows\"])\n\n        # log the ROC curve\n        fpr = []\n        tpr = []\n        thresholds = []\n        for item in metrics_list[0][\"confidenceMetrics\"]:\n            fpr.append(item.get(\"falsePositiveRate\", 0.0))\n            tpr.append(item.get(\"recall\", 0.0))\n            thresholds.append(item.get(\"confidenceThreshold\", 0.0))\n        print(f\"fpr: {fpr}\")\n        print(f\"tpr: {tpr}\")\n        print(f\"thresholds: {thresholds}\")\n        metricsc.log_roc_curve(fpr, tpr, thresholds)\n\n        # log the confusion matrix\n        annotations = []\n        for item in test_confusion_matrix[\"annotationSpecs\"]:\n            annotations.append(item[\"displayName\"])\n        logging.info(\"confusion matrix annotations: %s\", annotations)\n        metricsc.log_confusion_matrix(\n            annotations,\n            test_confusion_matrix[\"rows\"],\n        )\n\n        # log textual metrics info as well\n        for metric in metrics_list[0].keys():\n            if metric != \"confidenceMetrics\":\n                val_string = json.dumps(metrics_list[0][metric])\n                metrics.log_metric(metric, val_string)\n\n    logging.getLogger().setLevel(logging.INFO)\n\n    # extract the model resource name from the input Model Artifact\n    model_resource_path = model.metadata[\"resourceName\"]\n    logging.info(\"model path: %s\", model_resource_path)\n\n    # Get the trained model resource\n    model = aiplatform.Model(model_resource_path)\n\n    # Get model evaluation metrics from the the trained model\n    eval_name, metrics_list, metrics_str_list = get_eval_info(model)\n    logging.info(\"got evaluation name: %s\", eval_name)\n    logging.info(\"got metrics list: %s\", metrics_list)\n    log_metrics(metrics_list, metricsc)\n\n    thresholds_dict = json.loads(thresholds_dict_str)\n    deploy = classification_thresholds_check(metrics_list[0], thresholds_dict)\n    if deploy:\n        dep_decision = \"true\"\n    else:\n        dep_decision = \"false\"\n    logging.info(\"deployment decision is %s\", dep_decision)\n\n    return (dep_decision,)\n\n"
+            ],
+            "image": "gcr.io/deeplearning-platform-release/tf2-cpu.2-6:latest"
+          }
+        },
+        "exec-endpoint-create": {
+          "container": {
+            "args": [
+              "--type",
+              "CreateEndpoint",
+              "--payload",
+              "{\"display_name\": \"{{$.inputs.parameters['display_name']}}\", \"description\": \"{{$.inputs.parameters['description']}}\", \"labels\": {{$.inputs.parameters['labels']}}, \"encryption_spec\": {\"kms_key_name\":\"{{$.inputs.parameters['encryption_spec_key_name']}}\"}, \"network\": \"{{$.inputs.parameters['network']}}\"}",
+              "--project",
+              "{{$.inputs.parameters['project']}}",
+              "--location",
+              "{{$.inputs.parameters['location']}}",
+              "--gcp_resources",
+              "{{$.outputs.parameters['gcp_resources'].output_file}}",
+              "--executor_input",
+              "{{$}}"
+            ],
+            "command": [
+              "python3",
+              "-u",
+              "-m",
+              "google_cloud_pipeline_components.container.v1.endpoint.create_endpoint.launcher"
+            ],
+            "image": "gcr.io/ml-pipeline/google-cloud-pipeline-components:1.0.40"
+          }
+        },
+        "exec-model-deploy": {
+          "container": {
+            "args": [
+              "--type",
+              "DeployModel",
+              "--payload",
+              "{\"endpoint\": \"{{$.inputs.artifacts['endpoint'].metadata['resourceName']}}\", \"traffic_split\": {{$.inputs.parameters['traffic_split']}}, \"deployed_model\": {\"model\": \"{{$.inputs.artifacts['model'].metadata['resourceName']}}\", \"dedicated_resources\": {\"machine_spec\": {\"machine_type\": \"{{$.inputs.parameters['dedicated_resources_machine_type']}}\", \"accelerator_type\": \"{{$.inputs.parameters['dedicated_resources_accelerator_type']}}\", \"accelerator_count\": {{$.inputs.parameters['dedicated_resources_accelerator_count']}}}, \"min_replica_count\": {{$.inputs.parameters['dedicated_resources_min_replica_count']}}, \"max_replica_count\": {{$.inputs.parameters['dedicated_resources_max_replica_count']}}}, \"automatic_resources\": {\"min_replica_count\": {{$.inputs.parameters['automatic_resources_min_replica_count']}}, \"max_replica_count\": {{$.inputs.parameters['automatic_resources_max_replica_count']}}}, \"service_account\": \"{{$.inputs.parameters['service_account']}}\", \"disable_container_logging\": {{$.inputs.parameters['disable_container_logging']}}, \"enable_access_logging\": {{$.inputs.parameters['enable_access_logging']}}, \"explanation_spec\": {\"parameters\": {{$.inputs.parameters['explanation_parameters']}}, \"metadata\": {{$.inputs.parameters['explanation_metadata']}}}}}",
+              "--project",
+              "",
+              "--location",
+              "",
+              "--gcp_resources",
+              "{{$.outputs.parameters['gcp_resources'].output_file}}"
+            ],
+            "command": [
+              "python3",
+              "-u",
+              "-m",
+              "google_cloud_pipeline_components.container.v1.endpoint.deploy_model.launcher"
+            ],
+            "image": "gcr.io/ml-pipeline/google-cloud-pipeline-components:1.0.40"
+          }
+        },
+        "exec-tabular-dataset-create": {
+          "container": {
+            "args": [
+              "--method.project",
+              "{{$.inputs.parameters['project']}}",
+              "--method.location",
+              "{{$.inputs.parameters['location']}}",
+              "--method.display_name",
+              "{{$.inputs.parameters['display_name']}}",
+              "--method.bq_source",
+              "{{$.inputs.parameters['bq_source']}}",
+              "--method.labels",
+              "{{$.inputs.parameters['labels']}}",
+              "--executor_input",
+              "{{$}}",
+              "--resource_name_output_artifact_uri",
+              "{{$.outputs.artifacts['dataset'].uri}}"
+            ],
+            "command": [
+              "python3",
+              "-m",
+              "google_cloud_pipeline_components.container.aiplatform.remote_runner",
+              "--cls_name",
+              "TabularDataset",
+              "--method_name",
+              "create"
+            ],
+            "image": "gcr.io/ml-pipeline/google-cloud-pipeline-components:1.0.40"
+          }
+        }
+      }
+    },
+    "pipelineInfo": {
+      "name": "automl-tabular-beans-training"
+    },
+    "root": {
+      "dag": {
+        "outputs": {
+          "artifacts": {
+            "classification-model-eval-metrics-metrics": {
+              "artifactSelectors": [
+                {
+                  "outputArtifactKey": "metrics",
+                  "producerSubtask": "classification-model-eval-metrics"
+                }
+              ]
+            },
+            "classification-model-eval-metrics-metricsc": {
+              "artifactSelectors": [
+                {
+                  "outputArtifactKey": "metricsc",
+                  "producerSubtask": "classification-model-eval-metrics"
+                }
+              ]
+            }
+          }
+        },
+        "tasks": {
+          "automl-tabular-training-job": {
+            "cachingOptions": {
+              "enableCache": true
+            },
+            "componentRef": {
+              "name": "comp-automl-tabular-training-job"
+            },
+            "dependentTasks": [
+              "tabular-dataset-create"
+            ],
+            "inputs": {
+              "artifacts": {
+                "dataset": {
+                  "taskOutputArtifact": {
+                    "outputArtifactKey": "dataset",
+                    "producerTask": "tabular-dataset-create"
+                  }
+                }
+              },
+              "parameters": {
+                "budget_milli_node_hours": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "intValue": "1000"
+                    }
+                  }
+                },
+                "column_specs": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "stringValue": "{\"Area\": \"numeric\", \"Perimeter\": \"numeric\", \"MajorAxisLength\": \"numeric\", \"MinorAxisLength\": \"numeric\", \"AspectRation\": \"numeric\", \"Eccentricity\": \"numeric\", \"ConvexArea\": \"numeric\", \"EquivDiameter\": \"numeric\", \"Extent\": \"numeric\", \"Solidity\": \"numeric\", \"roundness\": \"numeric\", \"Compactness\": \"numeric\", \"ShapeFactor1\": \"numeric\", \"ShapeFactor2\": \"numeric\", \"ShapeFactor3\": \"numeric\", \"ShapeFactor4\": \"numeric\", \"Class\": \"categorical\"}"
+                    }
+                  }
+                },
+                "disable_early_stopping": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "intValue": "0"
+                    }
+                  }
+                },
+                "display_name": {
+                  "componentInputParameter": "TRAINING_DISPLAY_NAME"
+                },
+                "export_evaluated_data_items": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "intValue": "0"
+                    }
+                  }
+                },
+                "labels": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "stringValue": "{}"
+                    }
+                  }
+                },
+                "location": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "stringValue": "us-central1"
+                    }
+                  }
+                },
+                "model_display_name": {
+                  "componentInputParameter": "MODEL_DISPLAY_NAME"
+                },
+                "optimization_objective": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "stringValue": "minimize-log-loss"
+                    }
+                  }
+                },
+                "optimization_prediction_type": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "stringValue": "classification"
+                    }
+                  }
+                },
+                "project": {
+                  "componentInputParameter": "project"
+                },
+                "target_column": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "stringValue": "Class"
+                    }
+                  }
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "automl-tabular-training-job"
+            }
+          },
+          "classification-model-eval-metrics": {
+            "cachingOptions": {
+              "enableCache": true
+            },
+            "componentRef": {
+              "name": "comp-classification-model-eval-metrics"
+            },
+            "dependentTasks": [
+              "automl-tabular-training-job"
+            ],
+            "inputs": {
+              "artifacts": {
+                "model": {
+                  "taskOutputArtifact": {
+                    "outputArtifactKey": "model",
+                    "producerTask": "automl-tabular-training-job"
+                  }
+                }
+              },
+              "parameters": {
+                "location": {
+                  "componentInputParameter": "gcp_region"
+                },
+                "project": {
+                  "componentInputParameter": "project"
+                },
+                "thresholds_dict_str": {
+                  "componentInputParameter": "thresholds_dict_str"
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "classification-model-eval-metrics"
+            }
+          },
+          "condition-deploy-decision-1": {
+            "componentRef": {
+              "name": "comp-condition-deploy-decision-1"
+            },
+            "dependentTasks": [
+              "automl-tabular-training-job",
+              "classification-model-eval-metrics"
+            ],
+            "inputs": {
+              "artifacts": {
+                "pipelineparam--automl-tabular-training-job-model": {
+                  "taskOutputArtifact": {
+                    "outputArtifactKey": "model",
+                    "producerTask": "automl-tabular-training-job"
+                  }
+                }
+              },
+              "parameters": {
+                "pipelineparam--ENDPOINT_DISPLAY_NAME": {
+                  "componentInputParameter": "ENDPOINT_DISPLAY_NAME"
+                },
+                "pipelineparam--MACHINE_TYPE": {
+                  "componentInputParameter": "MACHINE_TYPE"
+                },
+                "pipelineparam--classification-model-eval-metrics-dep_decision": {
+                  "taskOutputParameter": {
+                    "outputParameterKey": "dep_decision",
+                    "producerTask": "classification-model-eval-metrics"
+                  }
+                },
+                "pipelineparam--gcp_region": {
+                  "componentInputParameter": "gcp_region"
+                },
+                "pipelineparam--project": {
+                  "componentInputParameter": "project"
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "condition-deploy-decision-1"
+            },
+            "triggerPolicy": {
+              "condition": "inputs.parameters['pipelineparam--classification-model-eval-metrics-dep_decision'].string_value == 'true'"
+            }
+          },
+          "tabular-dataset-create": {
+            "cachingOptions": {
+              "enableCache": true
+            },
+            "componentRef": {
+              "name": "comp-tabular-dataset-create"
+            },
+            "inputs": {
+              "parameters": {
+                "bq_source": {
+                  "componentInputParameter": "bq_source"
+                },
+                "display_name": {
+                  "componentInputParameter": "DATASET_DISPLAY_NAME"
+                },
+                "labels": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "stringValue": "{}"
+                    }
+                  }
+                },
+                "location": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "stringValue": "us-central1"
+                    }
+                  }
+                },
+                "project": {
+                  "componentInputParameter": "project"
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "tabular-dataset-create"
+            }
+          }
+        }
+      },
+      "inputDefinitions": {
+        "parameters": {
+          "DATASET_DISPLAY_NAME": {
+            "type": "STRING"
+          },
+          "ENDPOINT_DISPLAY_NAME": {
+            "type": "STRING"
+          },
+          "MACHINE_TYPE": {
+            "type": "STRING"
+          },
+          "MODEL_DISPLAY_NAME": {
+            "type": "STRING"
+          },
+          "TRAINING_DISPLAY_NAME": {
+            "type": "STRING"
+          },
+          "bq_source": {
+            "type": "STRING"
+          },
+          "gcp_region": {
+            "type": "STRING"
+          },
+          "project": {
+            "type": "STRING"
+          },
+          "thresholds_dict_str": {
+            "type": "STRING"
+          }
+        }
+      },
+      "outputDefinitions": {
+        "artifacts": {
+          "classification-model-eval-metrics-metrics": {
+            "artifactType": {
+              "schemaTitle": "system.Metrics",
+              "schemaVersion": "0.0.1"
+            }
+          },
+          "classification-model-eval-metrics-metricsc": {
+            "artifactType": {
+              "schemaTitle": "system.ClassificationMetrics",
+              "schemaVersion": "0.0.1"
+            }
+          }
+        }
+      }
+    },
+    "schemaVersion": "2.0.0",
+    "sdkVersion": "kfp-1.8.19"
+  },
+  "runtimeConfig": {
+    "gcsOutputDirectory": "gs://mwpmltraip-0obvksai/pipeline_root/beans"
+  }
+}

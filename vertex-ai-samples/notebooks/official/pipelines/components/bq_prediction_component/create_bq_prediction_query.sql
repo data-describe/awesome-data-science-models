@@ -1,0 +1,1 @@
+SELECT title, sentences, feature.* FROM `mwpmltr.mlops_bqml_text_analyisis.reuters_text_preprocessed_0obvksai` WHERE split = 'PREDICT' 
