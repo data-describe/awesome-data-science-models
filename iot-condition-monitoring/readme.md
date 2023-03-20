@@ -1,10 +1,11 @@
-# IoT Condition Monitoring - Paderborn Bearing Dataset 
+# IoT Condition Monitoring
+
 
 ## Use Case
 
 Many plants faces unplanned downtime and it assets fail over the period of time. With the help of data science, the main aim of this project is to provide plants an ability to to analyze the condition or health of machine assets using a ML tool. 
 
-## Paderborn Bearing Dataset
+## Paderborn Bearing Dataset 
 
 ### Experiment Setup
 
