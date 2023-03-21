@@ -1,0 +1,27 @@
+Bearing Code,Component,Extent of Damage,Damage Method,Damage Type
+KA01,Outer Ring,1,EDM,Artificial Damage
+KA03,Outer Ring,2,electric engraver,Artificial Damage
+KA05,Outer Ring,1,electric engraver,Artificial Damage
+KA06,Outer Ring,2,electric engraver,Artificial Damage
+KA07,Outer Ring,1,drilling,Artificial Damage
+KA08,Outer Ring,2,drilling,Artificial Damage
+KA09,Outer Ring,2,drilling,Artificial Damage
+KI01,Inner Ring,1,EDM,Artificial Damage
+KI03,Inner Ring,1,electric engraver,Artificial Damage
+KI05,Inner Ring,1,electric engraver,Artificial Damage
+KI07,Inner Ring,2,electric engraver,Artificial Damage
+KI08,Inner Ring,2,electric engraver,Artificial Damage
+KA04,Outer Ring,1,fatigue: pitting,Real Damage
+KA15,Outer Ring,1,Plastic deform: Indentations,Real Damage
+KA16,Outer Ring,2,fatigue: pitting,Real Damage
+KA22,Outer Ring,1,fatigue: pitting,Real Damage
+KA30,Outer Ring,1,Plastic deform: Indentations,Real Damage
+KB23,Inner Ring & Outer Ring,2,fatigue: pitting,Real Damage
+KB24,Inner Ring & Outer Ring,3,fatigue: pitting,Real Damage
+KB27,Inner Ring & Outer Ring,1,Plastic deform: Indentations,Real Damage
+KI04,Inner Ring,1,fatigue: pitting,Real Damage
+KI14,Inner Ring,1,fatigue: pitting,Real Damage
+KI16,Inner Ring,3,fatigue: pitting,Real Damage
+KI17,Inner Ring,1,fatigue: pitting,Real Damage
+KI18,Inner Ring,2,fatigue: pitting,Real Damage
+KI21,Inner Ring,1,fatigue: pitting,Real Damage
