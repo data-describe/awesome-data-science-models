@@ -24,7 +24,7 @@ from ml_metadata.proto import metadata_store_pb2
 from tfx.proto import example_gen_pb2, transform_pb2, pusher_pb2
 from tfx.types import Channel, standard_artifacts
 from tfx.orchestration import pipeline, data_types
-from tfx.dsl.components.common.importer import Importer
+from tfx.v1.dsl import Importer
 from tfx.dsl.components.common.resolver import Resolver
 from tfx.dsl.experimental import latest_artifacts_resolver
 from tfx.dsl.experimental import latest_blessed_model_resolver
@@ -144,7 +144,7 @@ def create_pipeline(
         schema=schema_importer.outputs["result"],
         module_file=TRANSFORM_MODULE_FILE,
         # This is a temporary workaround to run on Dataflow.
-        force_tf_compat_v1=config.BEAM_RUNNER == "DataflowRunner",
+        force_tf_compat_v1=config.BEAM_RUNNER == "DirectRunner",
         splits_config=transform_pb2.SplitsConfig(
             analyze=["train"], transform=["train", "eval"]
         ),
@@ -294,7 +294,7 @@ def create_pipeline(
     )
 
     beam_pipeline_args = config.BEAM_DIRECT_PIPELINE_ARGS
-    if config.BEAM_RUNNER == "DataflowRunner":
+    if config.BEAM_RUNNER == "DirectRunner":
         beam_pipeline_args = config.BEAM_DATAFLOW_PIPELINE_ARGS
 
     logging.info(f"Beam pipeline args: {beam_pipeline_args}")

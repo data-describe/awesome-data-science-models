@@ -82,7 +82,7 @@ VERTEX_TRAINING_CONFIG = {
     'use_gpu': False,
 }
 
-SERVING_RUNTIME = os.getenv("SERVING_RUNTIME", "tf2-cpu.2-5")
+SERVING_RUNTIME = os.getenv("SERVING_RUNTIME", "tf2-cpu.2-8")
 SERVING_IMAGE_URI = f"us-docker.pkg.dev/vertex-ai/prediction/{SERVING_RUNTIME}:latest"
 
 BATCH_PREDICTION_BQ_DATASET_NAME = os.getenv(

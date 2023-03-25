@@ -49,9 +49,9 @@ def _create_binary_classifier(feature_vocab_sizes, hyperparams):
             layers.append(embedding_output)
         elif feature_name in features.ONEHOT_CATEGORICAL_FEATURE_NAMES:
             vocab_size = feature_vocab_sizes[feature_name]
-            onehot_layer = keras.layers.experimental.preprocessing.CategoryEncoding(
-                max_tokens=vocab_size,
-                output_mode="binary",
+            onehot_layer = keras.layers.CategoryEncoding(
+                num_tokens=vocab_size, 
+                output_mode="one_hot",
                 name=f"{key}_onehot",
             )(input_layers[key])
             layers.append(onehot_layer)

@@ -80,6 +80,7 @@ def test_model_artifact():
     ), f"No model with display name {model_display_name} exists!"
 
     model = models[-1]
+    logging.info(f"Model: {model}")
     artifact_uri = model.gca_resource.artifact_uri
     logging.info(f"Model artifact uri:{artifact_uri}")
     assert tf.io.gfile.exists(
@@ -92,7 +93,8 @@ def test_model_artifact():
     assert (
         SERVING_DEFAULT_SIGNATURE_NAME in saved_model.signatures
     ), f"{SERVING_DEFAULT_SIGNATURE_NAME} not in model signatures!"
-
+    logging.info(f"SERVING_DEFAULT_SIGNATURE_NAME: {saved_model.signatures}")
+    
     prediction_fn = saved_model.signatures["serving_default"]
     predictions = prediction_fn(**new_test_instance)
     logging.info("Model produced predictions.")
