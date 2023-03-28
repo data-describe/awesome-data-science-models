@@ -166,21 +166,21 @@ def create_data(
         if datapart == "train":
             # filename = 'x_{}.csv'.format(datapart)
             # df_x.to_csv(filename, index=False, header=False)
-            df_x.to_csv(train_file_x, index=False, header=False)
+            df_x.to_csv(train_file_x, index=False)
             blob = bucket.blob(train_file_x)
             blob.upload_from_filename(train_file_x)
 
             # filename = 'y_{}.csv'.format(datapart)
-            df_y.to_csv(train_file_y, index=False, header=False)
+            df_y.to_csv(train_file_y, index=False)
             blob = bucket.blob(train_file_y)
             blob.upload_from_filename(train_file_y)
         else:
-            df_x.to_csv(test_file_x, index=False, header=False)
+            df_x.to_csv(test_file_x, index=False)
             blob = bucket.blob(test_file_x)
             blob.upload_from_filename(test_file_x)
 
             # filename = 'y_{}.csv'.format(datapart)
-            df_y.to_csv(test_file_y, index=False, header=False)
+            df_y.to_csv(test_file_y, index=False)
             blob = bucket.blob(test_file_y)
             blob.upload_from_filename(test_file_y)
 
