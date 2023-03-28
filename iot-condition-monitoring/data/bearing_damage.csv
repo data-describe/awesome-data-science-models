@@ -1,27 +1,27 @@
-Bearing Code,Component,Extent of Damage,Damage Method,Damage Type
-KA01,Outer Ring,1,EDM,Artificial Damage
-KA03,Outer Ring,2,electric engraver,Artificial Damage
-KA05,Outer Ring,1,electric engraver,Artificial Damage
-KA06,Outer Ring,2,electric engraver,Artificial Damage
-KA07,Outer Ring,1,drilling,Artificial Damage
-KA08,Outer Ring,2,drilling,Artificial Damage
-KA09,Outer Ring,2,drilling,Artificial Damage
-KI01,Inner Ring,1,EDM,Artificial Damage
-KI03,Inner Ring,1,electric engraver,Artificial Damage
-KI05,Inner Ring,1,electric engraver,Artificial Damage
-KI07,Inner Ring,2,electric engraver,Artificial Damage
-KI08,Inner Ring,2,electric engraver,Artificial Damage
-KA04,Outer Ring,1,fatigue: pitting,Real Damage
-KA15,Outer Ring,1,Plastic deform: Indentations,Real Damage
-KA16,Outer Ring,2,fatigue: pitting,Real Damage
-KA22,Outer Ring,1,fatigue: pitting,Real Damage
-KA30,Outer Ring,1,Plastic deform: Indentations,Real Damage
-KB23,Inner Ring & Outer Ring,2,fatigue: pitting,Real Damage
-KB24,Inner Ring & Outer Ring,3,fatigue: pitting,Real Damage
-KB27,Inner Ring & Outer Ring,1,Plastic deform: Indentations,Real Damage
-KI04,Inner Ring,1,fatigue: pitting,Real Damage
-KI14,Inner Ring,1,fatigue: pitting,Real Damage
-KI16,Inner Ring,3,fatigue: pitting,Real Damage
-KI17,Inner Ring,1,fatigue: pitting,Real Damage
-KI18,Inner Ring,2,fatigue: pitting,Real Damage
-KI21,Inner Ring,1,fatigue: pitting,Real Damage
+Bearing_Code,Component,Extent_of_Damage,Damage_Method,Damage_Type
+KA01,outer_ring,1,EDM,Artificial_Damage
+KA03,outer_ring,2,electric_engraver,Artificial_Damage
+KA05,outer_ring,1,electric_engraver,Artificial_Damage
+KA06,outer_ring,2,electric_engraver,Artificial_Damage
+KA07,outer_ring,1,drilling,Artificial_Damage
+KA08,outer_ring,2,drilling,Artificial_Damage
+KA09,outer_ring,2,drilling,Artificial_Damage
+KI01,inner_ring,1,EDM,Artificial_Damage
+KI03,inner_ring,1,electric_engraver,Artificial_Damage
+KI05,inner_ring,1,electric_engraver,Artificial_Damage
+KI07,inner_ring,2,electric_engraver,Artificial_Damage
+KI08,inner_ring,2,electric_engraver,Artificial_Damage
+KA04,outer_ring,1,fatigue_pitting,Real_Damage
+KA15,outer_ring,1,Plastic_deform_Indentations,Real_Damage
+KA16,outer_ring,2,fatigue_pitting,Real_Damage
+KA22,outer_ring,1,fatigue_pitting,Real_Damage
+KA30,outer_ring,1,Plastic_deform_Indentations,Real_Damage
+KB23,inner_ring_and_outer_ring,2,fatigue_pitting,Real_Damage
+KB24,inner_ring_and_outer_ring,3,fatigue_pitting,Real_Damage
+KB27,inner_ring_and_outer_ring,1,Plastic_deform_Indentations,Real_Damage
+KI04,inner_ring,1,fatigue_pitting,Real_Damage
+KI14,inner_ring,1,fatigue_pitting,Real_Damage
+KI16,inner_ring,3,fatigue_pitting,Real_Damage
+KI17,inner_ring,1,fatigue_pitting,Real_Damage
+KI18,inner_ring,2,fatigue_pitting,Real_Damage
+KI21,inner_ring,1,fatigue_pitting,Real_Damage
