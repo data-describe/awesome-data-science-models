@@ -1,0 +1,321 @@
+{
+  "pipelineSpec": {
+    "components": {
+      "comp-create-data": {
+        "executorLabel": "exec-create-data",
+        "inputDefinitions": {
+          "parameters": {
+            "bucket_name": {
+              "type": "STRING"
+            },
+            "dataset_id": {
+              "type": "STRING"
+            },
+            "project_id": {
+              "type": "STRING"
+            },
+            "use_demographic": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "test_file_x": {
+              "artifactType": {
+                "schemaTitle": "system.Artifact",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "test_file_y": {
+              "artifactType": {
+                "schemaTitle": "system.Artifact",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "train_file_x": {
+              "artifactType": {
+                "schemaTitle": "system.Artifact",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "train_file_y": {
+              "artifactType": {
+                "schemaTitle": "system.Artifact",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-train-model": {
+        "executorLabel": "exec-train-model",
+        "inputDefinitions": {
+          "artifacts": {
+            "test_file_x": {
+              "artifactType": {
+                "schemaTitle": "system.Artifact",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "test_file_y": {
+              "artifactType": {
+                "schemaTitle": "system.Artifact",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "train_file_x": {
+              "artifactType": {
+                "schemaTitle": "system.Artifact",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "train_file_y": {
+              "artifactType": {
+                "schemaTitle": "system.Artifact",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          },
+          "parameters": {
+            "best_params": {
+              "type": "STRING"
+            },
+            "bucket_name": {
+              "type": "STRING"
+            },
+            "hp_tune": {
+              "type": "STRING"
+            },
+            "num_iterations": {
+              "type": "INT"
+            },
+            "project_id": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "best_params_file": {
+              "artifactType": {
+                "schemaTitle": "system.Artifact",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "metrics_file": {
+              "artifactType": {
+                "schemaTitle": "system.Artifact",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "model_file": {
+              "artifactType": {
+                "schemaTitle": "system.Model",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      }
+    },
+    "deploymentSpec": {
+      "executors": {
+        "exec-create-data": {
+          "container": {
+            "args": [
+              "--executor_input",
+              "{{$}}",
+              "--function_to_execute",
+              "create_data"
+            ],
+            "command": [
+              "sh",
+              "-c",
+              "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet     --no-warn-script-location 'pandas-gbq' 'google-cloud-storage' 'scikit-learn' 'kfp==1.8.14' && \"$0\" \"$@\"\n",
+              "sh",
+              "-ec",
+              "program_path=$(mktemp -d)\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\npython3 -m kfp.v2.components.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+              "\nimport kfp\nfrom kfp.v2 import dsl\nfrom kfp.v2.dsl import *\nfrom typing import *\n\ndef create_data(\n    project_id: str,\n    bucket_name: str,\n    dataset_id: str,\n    use_demographic: bool,\n    train_file_x: OutputPath(\"csv\"),\n    train_file_y: OutputPath(\"csv\"),\n    test_file_x: OutputPath(\"csv\"),\n    test_file_y: OutputPath(\"csv\"),\n):\n\n    from google.cloud import storage\n    import logging\n    import pandas as pd\n    import pandas_gbq\n\n    def to_target_feature(df, cat_1s):\n        # collect category 1 vector\n        cat1_dict = df[\"Product_Category_1\"].value_counts().to_dict()\n\n        user_cat1_vec = []\n        for cat in cat_1s:\n            try:\n                val = cat1_dict[cat]\n            except:\n                val = 0\n            user_cat1_vec.append(val)\n\n        return user_cat1_vec\n\n    def to_categorical_features(df, cat_1s, cat_2s, cat_3s, occupations, city_cats):\n        # collect category 1 vector\n        cat1_dict = df[\"Product_Category_1\"].value_counts().to_dict()\n\n        user_cat1_vec = []\n        for cat in cat_1s:\n            try:\n                val = cat1_dict[cat]\n            except:\n                val = 0\n            user_cat1_vec.append(val)\n\n        # collect category 2 vector\n        cat2_dict = df[\"Product_Category_2\"].value_counts().to_dict()\n\n        user_cat2_vec = []\n        for cat in cat_2s:\n            try:\n                val = cat2_dict[cat]\n            except:\n                val = 0\n            user_cat2_vec.append(val)\n\n        # collect category 3 vector\n        cat3_dict = df[\"Product_Category_3\"].value_counts().to_dict()\n\n        user_cat3_vec = []\n        for cat in cat_3s:\n            try:\n                val = cat3_dict[cat]\n            except:\n                val = 0\n            user_cat3_vec.append(val)\n\n        # collect occupation vector\n        occupation = df[\"Occupation\"][df.first_valid_index()]\n        occupation_vec = []\n        for occ in occupations:\n            if occ == occupation:\n                occupation_vec.append(1)\n            else:\n                occupation_vec.append(0)\n\n        # collect city category vector\n        city = df[\"City_Category\"][df.first_valid_index()]\n        city_vec = []\n        for cat in city_cats:\n            if cat == city:\n                city_vec.append(1)\n            else:\n                city_vec.append(0)\n\n        user_cat_vector = (\n            user_cat1_vec + user_cat2_vec + user_cat3_vec + occupation_vec + city_vec\n        )\n\n        return user_cat_vector\n\n    def produce_features(\n        df,\n        cat_1s,\n        cat_2s,\n        cat_3s,\n        occupations,\n        city_cats,\n        datapart,\n        bucket,\n        use_demographic,\n    ):\n        x_rows = []\n        y_rows = []\n\n        for user_id in set(df[\"User_ID\"]):\n            df_part = df[df[\"User_ID\"] == user_id].reset_index(drop=True)\n\n            df_part_y = pd.DataFrame(df_part.iloc[0]).T  # just the 1st row\n            df_part_x = df_part.drop([0])  # drop the 1st row\n\n            # transform categorical features\n            user_cat_vector = to_categorical_features(\n                df_part_x, cat_1s, cat_2s, cat_3s, occupations, city_cats\n            )\n\n            # collect continuous features\n            first_valid_index = df_part_x.first_valid_index()\n\n            user_id = df_part_x[\"User_ID\"][first_valid_index]\n            gender = df_part_x[\"Gender\"][first_valid_index]\n            age = df_part_x[\"Age\"][first_valid_index]\n            stay = df_part_x[\"Stay_In_Current_City_Years\"][first_valid_index]\n            marital = df_part_x[\"Marital_Status\"][first_valid_index]\n\n            continuous_features = []\n            if use_demographic is True:\n                continuous_features = [gender, age, stay, marital]\n\n            # combine the continuous and categorial\n            x_row = continuous_features + user_cat_vector\n\n            # collect the target vector\n            target = to_target_feature(df_part_y, cat_1s)\n\n            # combine with the user_id\n            y_row = target\n\n            # add results to the list\n            x_rows.append(x_row)\n            y_rows.append(y_row)\n\n        # save results to Cloud Storage\n\n        df_x = pd.DataFrame(x_rows)\n        df_y = pd.DataFrame(y_rows)\n\n        if datapart == \"train\":\n            # filename = 'x_{}.csv'.format(datapart)\n            # df_x.to_csv(filename, index=False, header=False)\n            df_x.to_csv(train_file_x, index=False)\n            blob = bucket.blob(train_file_x)\n            blob.upload_from_filename(train_file_x)\n\n            # filename = 'y_{}.csv'.format(datapart)\n            df_y.to_csv(train_file_y, index=False)\n            blob = bucket.blob(train_file_y)\n            blob.upload_from_filename(train_file_y)\n        else:\n            df_x.to_csv(test_file_x, index=False)\n            blob = bucket.blob(test_file_x)\n            blob.upload_from_filename(test_file_x)\n\n            # filename = 'y_{}.csv'.format(datapart)\n            df_y.to_csv(test_file_y, index=False)\n            blob = bucket.blob(test_file_y)\n            blob.upload_from_filename(test_file_y)\n\n    # download the train and test files\n    storage_client = storage.Client(project=project_id)\n    bucket = storage_client.get_bucket(bucket_name)\n\n    blob = bucket.blob(\"train.csv\")\n    blob.download_to_filename(\"train.csv\")\n    train_df = pd.read_csv(\"train.csv\")\n\n    blob = bucket.blob(\"test.csv\")\n    blob.download_to_filename(\"test.csv\")\n    test_df = pd.read_csv(\"test.csv\")\n\n    # remove Purchase column from test set and combine\n    train_df = train_df.drop([\"Purchase\"], axis=1)\n    full_df = pd.concat([train_df, test_df])\n\n    # load the combined data to BigQuery\n    full_df.to_gbq(\n        destination_table=\"{}.full_dataset_raw\".format(dataset_id),\n        project_id=project_id,\n        if_exists=\"replace\",\n    )\n\n    # perform feature transformation and train test split\n    sql = \"\"\"\n    SELECT \n     User_ID\n    ,CASE WHEN Gender = 'M' THEN 1 ELSE 0 END AS Gender\n    ,CASE\n      WHEN Age = '0-17' THEN 1\n      WHEN Age = '18-25' THEN 2\n      WHEN Age = '26-35' THEN 3\n      WHEN Age = '36-45' THEN 4\n      WHEN Age = '46-50' THEN 5\n      WHEN Age = '51-55' THEN 6\n      WHEN Age = '55+' THEN 7\n      ELSE 0\n      END AS Age\n    ,Occupation\n    ,City_Category\n    ,CASE WHEN Stay_In_Current_City_Years = '4+' THEN 4 ELSE CAST(Stay_In_Current_City_Years AS INT64) END AS Stay_In_Current_City_Years\n    ,Marital_Status\n    ,IFNULL(Product_Category_1,0) AS Product_Category_1\n    ,IFNULL(Product_Category_2,0) AS Product_Category_2\n    ,IFNULL(Product_Category_3,0) AS Product_Category_3\n    FROM `{}.{}.full_dataset_raw` \n    \"\"\"\n\n    train_sql = (\n        sql.format(project_id, dataset_id)\n        + \"WHERE MOD(User_ID, 5) != 0 -- 80% to train \"\n    )\n    test_sql = (\n        sql.format(project_id, dataset_id) + \"WHERE MOD(User_ID, 5) = 0 -- 20% to test\"\n    )\n\n    # Limit data size for demo purposes.\n    # train_sql += \"\\nLIMIT 1001\"\n    # test_sql += \"\\nLIMIT 1000\"\n\n    train_df = pandas_gbq.read_gbq(train_sql, project_id=project_id)\n    test_df = pandas_gbq.read_gbq(test_sql, project_id=project_id)\n\n    # collect all possible categorical values\n    cat_1s = sorted(set(train_df[\"Product_Category_1\"]))\n    cat_2s = sorted(set(train_df[\"Product_Category_2\"]))\n    cat_3s = sorted(set(train_df[\"Product_Category_3\"]))\n    occupations = sorted(set(train_df[\"Occupation\"]))\n    city_cats = sorted(set(train_df[\"City_Category\"]))\n\n    # generate the feature sets\n    logging.info(\"Generating train set.\")\n    produce_features(\n        df=train_df,\n        cat_1s=cat_1s,\n        cat_2s=cat_2s,\n        cat_3s=cat_3s,\n        occupations=occupations,\n        city_cats=city_cats,\n        datapart=\"train\",\n        bucket=bucket,\n        use_demographic=use_demographic,\n    )\n    logging.info(\"Generating test set.\")\n    produce_features(\n        df=test_df,\n        cat_1s=cat_1s,\n        cat_2s=cat_2s,\n        cat_3s=cat_3s,\n        occupations=occupations,\n        city_cats=city_cats,\n        datapart=\"test\",\n        bucket=bucket,\n        use_demographic=use_demographic,\n    )\n\n"
+            ],
+            "image": "python:3.9"
+          }
+        },
+        "exec-train-model": {
+          "container": {
+            "args": [
+              "--executor_input",
+              "{{$}}",
+              "--function_to_execute",
+              "train_model"
+            ],
+            "command": [
+              "sh",
+              "-c",
+              "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet     --no-warn-script-location 'google-cloud-storage' 'scikit-learn' 'pandas' 'kfp==1.8.14' && \"$0\" \"$@\"\n",
+              "sh",
+              "-ec",
+              "program_path=$(mktemp -d)\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\npython3 -m kfp.v2.components.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+              "\nimport kfp\nfrom kfp.v2 import dsl\nfrom kfp.v2.dsl import *\nfrom typing import *\n\ndef train_model(\n    hp_tune: bool,\n    project_id: str,\n    bucket_name: str,\n    train_file_x: InputPath(\"csv\"),\n    test_file_x: InputPath(\"csv\"),\n    train_file_y: InputPath(\"csv\"),\n    test_file_y: InputPath(\"csv\"),\n    best_params_file: OutputPath(\"json\"),\n    metrics_file: OutputPath(\"json\"),\n    model_file: Output[Model],\n    num_iterations: Optional[int] = 2,\n    best_params: Optional[dict] = None,\n) -> None:\n\n    from google.cloud import storage\n    import json\n    import logging\n    import numpy as np\n    import pandas as pd\n    import os\n    from sklearn.ensemble import RandomForestClassifier\n    from sklearn.model_selection import train_test_split\n    import pickle\n    import sklearn\n\n    logging.info(\"The scikit-learn version is {}.\".format(sklearn.__version__))\n\n    metrics = {}\n\n    x_train_df = pd.read_csv(train_file_x)\n    x_test_df = pd.read_csv(test_file_x)\n    y_test_df = pd.read_csv(test_file_y)\n    y_train_df = pd.read_csv(train_file_y)\n\n    if hp_tune is True:\n        logging.info(\"Started hyperparameter tuning\")\n        best_accuracy = -1\n        for i in range(0, num_iterations):\n            # ramdom split for train and validation\n            x_train, x_test, y_train, y_test = train_test_split(\n                x_train_df, y_train_df, test_size=0.2\n            )\n\n            # randomly assign hyperparameters\n            n_estimators = np.random.randint(10, 1000)\n            max_depth = np.random.randint(10, 1000)\n            min_samples_split = np.random.randint(2, 10)\n            min_samples_leaf = np.random.randint(1, 10)\n            max_features = [\"auto\", \"sqrt\", \"log2\", None][np.random.randint(0, 3)]\n\n            # fit the model on the training set with the parameters\n            rf_model = RandomForestClassifier(\n                n_estimators=n_estimators,\n                max_depth=max_depth,\n                min_samples_split=min_samples_split,\n                min_samples_leaf=min_samples_leaf,\n                max_features=max_features,\n                random_state=15,\n                n_jobs=-1,\n            )\n            rf_model.fit(x_train, y_train)\n\n            # make predictions on the test set\n            y_pred = rf_model.predict(x_test)\n\n            # assess the accuracy\n            total_preds = 0\n            total_correct = 0\n\n            for j in range(0, y_pred.shape[0]):\n                total_preds += 1\n                if np.array_equal(y_pred[j], y_test.values[j]):\n                    total_correct += 1\n\n            accuracy = total_correct / total_preds\n            metrics[f\"iteration_{i}_accuracy\"] = accuracy\n\n            # determine whether to update parameters\n            if accuracy > best_accuracy:\n                best_accuracy = accuracy\n\n                best_n_estimators = n_estimators\n                best_max_depth = max_depth\n                best_min_samples_split = min_samples_split\n                best_min_samples_leaf = min_samples_leaf\n                best_max_features = max_features\n\n                # create a dictionary with the results\n                best_params = {\n                    \"n_estimators\": best_n_estimators,\n                    \"max_depth\": best_max_depth,\n                    \"min_samples_split\": best_min_samples_split,\n                    \"min_samples_leaf\": best_min_samples_leaf,\n                    \"max_features\": best_max_features,\n                }\n                # write parameters to disk\n\n        with open(best_params_file + \".json\", \"w\") as f:\n            json.dump(best_params, f)\n\n        logging.info(\n            \"Completed hp tuning iteration {}, best accuracy {} with params {}\".format(\n                str(i + 1), str(best_accuracy), best_params\n            )\n        )\n\n    else:\n\n        logging.info(\"Parameters loaded {}\".format(str(best_params)))\n\n    # fit a model on the entire training set with the best parameters\n    logging.info(\"Fitting model across whole training set\")\n    rf_model = RandomForestClassifier(\n        n_estimators=best_params[\"n_estimators\"],\n        max_depth=best_params[\"max_depth\"],\n        min_samples_split=best_params[\"min_samples_split\"],\n        min_samples_leaf=best_params[\"min_samples_leaf\"],\n        max_features=best_params[\"max_features\"],\n        random_state=15,\n        n_jobs=-1,\n    )\n    rf_model.fit(x_train_df, y_train_df)\n\n    # export the classifier to a file\n    logging.info(\"Exporting model to Cloud Storage\")\n    model_filename = \"model.pkl\"\n    # dump(rf_model, model_file.path + \".pkl\")\n\n    with open(model_file.path + \".pkl\", \"wb\") as f:\n        pickle.dump(rf_model, f)\n\n    # assess the model accuracy\n    # make predictions on the test set\n    logging.info(\"Assessing model accuracy\")\n    y_pred = rf_model.predict(x_test_df)\n    total_preds = 0\n    total_correct = 0\n    for i in range(0, y_pred.shape[0]):\n        total_preds += 1\n\n        if np.array_equal(y_pred[i], y_test_df.values[i]):\n            total_correct += 1\n\n    accuracy = str(round((total_correct / total_preds) * 100))\n    metrics[\"final_model_accuracy\"] = accuracy\n    logging.info(\"Predictions correct for {}% of test samples\".format(accuracy))\n\n    output = json.dumps(metrics)\n    with open(metrics_file + \".json\", \"w\") as f:\n        json.dump(metrics, f)\n\n"
+            ],
+            "image": "python:3.9"
+          }
+        }
+      }
+    },
+    "pipelineInfo": {
+      "name": "black-friday-pipeline"
+    },
+    "root": {
+      "dag": {
+        "tasks": {
+          "create-data": {
+            "cachingOptions": {
+              "enableCache": true
+            },
+            "componentRef": {
+              "name": "comp-create-data"
+            },
+            "inputs": {
+              "parameters": {
+                "bucket_name": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "stringValue": "black-friday-dataset-aaa"
+                    }
+                  }
+                },
+                "dataset_id": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "stringValue": "black_friday"
+                    }
+                  }
+                },
+                "project_id": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "stringValue": "ds-training-380514"
+                    }
+                  }
+                },
+                "use_demographic": {
+                  "componentInputParameter": "use_demographic"
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "create-data"
+            }
+          },
+          "train-model": {
+            "cachingOptions": {
+              "enableCache": true
+            },
+            "componentRef": {
+              "name": "comp-train-model"
+            },
+            "dependentTasks": [
+              "create-data"
+            ],
+            "inputs": {
+              "artifacts": {
+                "test_file_x": {
+                  "taskOutputArtifact": {
+                    "outputArtifactKey": "test_file_x",
+                    "producerTask": "create-data"
+                  }
+                },
+                "test_file_y": {
+                  "taskOutputArtifact": {
+                    "outputArtifactKey": "test_file_y",
+                    "producerTask": "create-data"
+                  }
+                },
+                "train_file_x": {
+                  "taskOutputArtifact": {
+                    "outputArtifactKey": "train_file_x",
+                    "producerTask": "create-data"
+                  }
+                },
+                "train_file_y": {
+                  "taskOutputArtifact": {
+                    "outputArtifactKey": "train_file_y",
+                    "producerTask": "create-data"
+                  }
+                }
+              },
+              "parameters": {
+                "best_params": {
+                  "componentInputParameter": "best_params"
+                },
+                "bucket_name": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "stringValue": "black-friday-dataset-aaa"
+                    }
+                  }
+                },
+                "hp_tune": {
+                  "componentInputParameter": "hp_tune"
+                },
+                "num_iterations": {
+                  "componentInputParameter": "num_iterations"
+                },
+                "project_id": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "stringValue": "ds-training-380514"
+                    }
+                  }
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "train-model"
+            }
+          }
+        }
+      },
+      "inputDefinitions": {
+        "parameters": {
+          "best_params": {
+            "type": "STRING"
+          },
+          "best_params_file": {
+            "type": "STRING"
+          },
+          "hp_tune": {
+            "type": "STRING"
+          },
+          "metrics_file": {
+            "type": "STRING"
+          },
+          "num_iterations": {
+            "type": "INT"
+          },
+          "test_file_x": {
+            "type": "STRING"
+          },
+          "test_file_y": {
+            "type": "STRING"
+          },
+          "train_file_x": {
+            "type": "STRING"
+          },
+          "train_file_y": {
+            "type": "STRING"
+          },
+          "use_demographic": {
+            "type": "STRING"
+          }
+        }
+      }
+    },
+    "schemaVersion": "2.0.0",
+    "sdkVersion": "kfp-1.8.14"
+  },
+  "runtimeConfig": {
+    "gcsOutputDirectory": "gs://black-friday-dataset-aaa/pipeline_root/black_friday"
+  }
+}
