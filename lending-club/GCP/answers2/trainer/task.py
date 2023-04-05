@@ -272,21 +272,39 @@ X_test = X_test[X_train.columns.tolist()]
 # the parameters passed into the python script
 # perform    transformation  
 
+feature_names = X_train.columns.tolist()
+dtrain = xgb.DMatrix(X_train, label=y_train, feature_names=feature_names)
+param = {'max_depth':args.max_depth,
+         'num_boost_round': args.num_boost_round,
+         'booster': args.booster,
+         'objective': 'multi:softprob'
+        }
 
-classifier = xgb.XGBClassifier(
-    max_depth=args.max_depth,
-    num_boost_round=args.num_boost_round,
-    booster=args.booster,
-    eval_metric="auc",
+lossvalname = 'test-mlogloss-mean'
+param['eval_metric'] = 'mlogloss'
+param['num_class'] = 2
+stratified_val= True
+res = xgb.cv(params= param,
+                     dtrain=dtrain,
+                     nfold=5,stratified=stratified_val,early_stopping_rounds=5, seed=1234)
+lossvalue = res[lossvalname].values[-1]
+
+hpt = hypertune.HyperTune()
+
+hpt.report_hyperparameter_tuning_metric(
+    hyperparameter_metric_tag='rmseORmlogloss',
+    metric_value=lossvalue,
+    global_step=1
 )
 
+classifier = xgb.train(params= param,dtrain=dtrain)
 # Transform the features and fit them to the classifier
 # classifier.fit(train_df[FEATURES], train_df[TARGET])
-classifier.fit(X_train, y_train)
+#classifier.fit(X_train, y_train)
 
 # Report the mean accuracy as hyperparameter tuning objective metric.
 # Calculate the mean accuracy on the given test data and labels.
-score = classifier.score(X_test, y_test)
+# score = classifier.score(X_test, y_test)
 
 
 # The default name of the metric is training/hptuning/metric.
@@ -294,11 +312,12 @@ score = classifier.score(X_test, y_test)
 # if you use a custom name, you must set the hyperparameterMetricTag value in the
 # HyperparameterSpec object in your job request to match your chosen name.
 # https://cloud.google.com/ml-engine/reference/rest/v1/projects.jobs#HyperparameterSpec
+'''
 hpt = hypertune.HyperTune()
 hpt.report_hyperparameter_tuning_metric(
-    hyperparameter_metric_tag="rmseORmlogloss", metric_value=score, global_step=100
+    hyperparameter_metric_tag="my_metric_tag", metric_value=score, global_step=100
 )
-
+'''
 # Export and save the model to GCS
 # Export the model to a file
 now = (datetime.datetime.now() + datetime.timedelta(hours=-5)).strftime("%Y%m%d_%H%M%S") # Central Time
