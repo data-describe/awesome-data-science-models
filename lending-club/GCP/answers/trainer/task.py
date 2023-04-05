@@ -34,14 +34,17 @@ parser.add_argument(
     default="gbtree",
     type=str,
 )
+
 parser.add_argument(
     "--project-id",
+    dest='project_id',
     type=str,
     default="mwe-sanofi-ml-workshop",
     help="The GCP Project ID",
 )
 parser.add_argument(
     "--bucket-name",
+    dest='bucket_name',
     type=str,
     default="ml-lending-club-demo",
     help="The Cloud Storage bucket to be used for process artifacts",
@@ -78,15 +81,15 @@ schema = pd.Series(
         "is_bad": "int64",
         # 'emp_title': 'category',
         "emp_length": "float64",
-        "home_ownership": "category",
+        "home_ownership": "object",
         "annual_inc": "float64",
-        "verification_status": "category",
+        "verification_status": "object",
         # 'pymnt_plan': 'category',
         # 'Notes': 'category',
-        "purpose_cat": "category",
+        "purpose_cat": "object",
         # 'purpose': 'category',
         "zip_code": "int64",
-        "addr_state": "category",
+        "addr_state": "object",
         "debt_to_income": "float64",
         "delinq_2yrs": "float64",
         "earliest_cr_line": "datetime64[ns]",
@@ -101,7 +104,7 @@ schema = pd.Series(
         # 'initial_list_status': 'category',
         # 'collections_12_mths_ex_med': 'Int64',
         "mths_since_last_major_derog": "int64",
-        "policy_code": "category",
+        "policy_code": "object",
     }
 )
 
@@ -188,7 +191,7 @@ target = "is_bad"
 numerical_features = lcd.select_dtypes(include=["number"]).columns
 numerical_features = numerical_features.drop([target])
 
-categorical_features = lcd.select_dtypes(include=["category"]).columns
+categorical_features = lcd.select_dtypes(include=["object"]).columns
 predictors = numerical_features.union(categorical_features, sort=False)
 
 # exec(open("/mnt/c/Users/bjaco/Documents/projects_2020/mavenwave/python/lcd_1/lcd_read_input_1.py").read())
@@ -253,6 +256,14 @@ for cat_var in list(categorical_features.values):
     X_test.drop(cat_var, axis=1, inplace=True)
     X_test = X_test.join(dum_df)
 # X_test.columns
+# set value of zero for columns which are in training set but not in test set (result of transforming categorical column to set of dummy columns)
+
+not_in_test = [ item for item in X_train.columns.tolist() if item not in X_test.columns.tolist() ]
+if len(not_in_test) >1 :
+    for col in not_in_test :
+        X_test[col]=0      
+# remove columns which are not in training set
+X_test = X_test[X_train.columns.tolist()]
 
 # Use the Hyperparameters
 
@@ -299,6 +310,19 @@ subprocess.check_call(
         "cp",
         model_filename,
         "gs://" + str(args.bucket_name) + "/lending_club/model/",
+    ]
+)
+
+
+# upload the test data to Cloud Storage.for
+test_data_filename = 'test_set.csv'
+X_test.to_csv('test_set.csv')
+subprocess.check_call(
+    [
+        "gsutil",
+        "cp",
+        test_data_filename,
+        "gs://" + str(args.bucket_name) + "/lending_club/data/",
     ]
 )
 
