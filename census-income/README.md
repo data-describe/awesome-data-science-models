@@ -7,7 +7,8 @@ The census income example is a binary classification problem which has been used
 - submit a hptuning and training jobs on Vertex AI
 - do batch predictions on the trained model and get model explanations
 - deploy to an endpoint for online prediction
-
+- how to do continuous model monitoring for detection of skew and drift and threshsold-based alerting
+s
 The objective of the model itself is to predict whether a said person, given their attributes, earns more than $50k per annum or not.
 
 ## Running Instructions
@@ -15,27 +16,44 @@ The notebooks were run inside a Vertex AI user-managed workbench. The required d
 
 ## Files
 ```
-├── EDA
-│   └── Census_Income_EDA.ipynb
-├── README.md
-├── answers
-│   ├── AutoML_batch_online_prediction_explain.ipynb
-│   ├── hptuning
-│   │   ├── Dockerfile
-│   │   ├── hptuning.ipynb
-│   │   └── trainer
-│   │       ├── __init__.py
-│   │       └── task.py
-│   └── local_training.ipynb
-├── exercises
-│   ├── AutoML_batch_online_prediction_explain.ipynb
-│   ├── hptuning
-│   │   ├── Dockerfile
-│   │   ├── hptuning.ipynb
-│   │   └── trainer
-│   │       ├── __init__.py
-│   │       └── task.py
-│   └── local_training.ipynb
+|   README.md
+|
+\---GCP
+    +---answers
+    |   |   AutoML_batch_online_prediction_explain.ipynb
+    |   |   Census_Income.ipynb
+    |   |   local_training.ipynb
+    |   |
+    |   +---hptuning
+    |   |   |   Dockerfile
+    |   |   |   hptuning.ipynb
+    |   |   |
+    |   |   \---trainer
+    |   |           task.py
+    |   |           __init__.py
+    |   |
+    |   \---model_monitoring
+    |           Model_monitoring.ipynb
+    |
+    +---EDA
+    |       Census_Income_EDA.ipynb
+    |
+    +---exercises
+    |   |   AutoML_batch_online_prediction_explain.ipynb
+    |   |   local_training.ipynb
+    |   |
+    |   +---hptuning
+    |   |   |   Dockerfile
+    |   |   |   hptuning.ipynb
+    |   |   |
+    |   |   \---trainer
+    |   |           task.py
+    |   |           __init__.py
+    |   |
+    |   \---model_monitoring
+    |           GCP_monitoring_console_alert.jpg
+    |           GCP_monitoring_email_alert.jpg
+    |           Model_monitoring.ipynb
 ```
 **EDA/Census_Income_EDA.ipynb**
 <br>
