@@ -17,6 +17,7 @@ Instructions to re-generate w/ tags:
 6. Run the code in [3-Train_AutoML_Model.ipynb](./answers/3-Train_AutoML_Model.ipynb)
 7. Run the code in [4-Run_Batch_Inference.ipynb](./answers/4-Run_Batch_Inference.ipynb)
 8. Run the code in [5-Deploy_and_Run_Online_Inference.ipynb](./answers/5-Deploy_and_Run_Online_Inference.ipynb)
+9. Run the code in [6-Model_monitoring.ipynb](./answers/6-Model_monitoring.ipynb)
 
 
 The output file will be called [file_out_2495_tags.csv](./answers/file_out_2495_tags.csv)
