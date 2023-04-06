@@ -8,7 +8,7 @@ The census income example is a binary classification problem which has been used
 - do batch predictions on the trained model and get model explanations
 - deploy to an endpoint for online prediction
 - how to do continuous model monitoring for detection of skew and drift and threshsold-based alerting
-s
+
 The objective of the model itself is to predict whether a said person, given their attributes, earns more than $50k per annum or not.
 
 ## Running Instructions
@@ -23,6 +23,7 @@ The notebooks were run inside a Vertex AI user-managed workbench. The required d
     |   |   AutoML_batch_online_prediction_explain.ipynb
     |   |   Census_Income.ipynb
     |   |   local_training.ipynb
+    |   |   census_custom_pipeline.ipynb
     |   |
     |   +---hptuning
     |   |   |   Dockerfile
