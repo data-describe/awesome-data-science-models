@@ -1,5 +1,5 @@
 
-#!/usr/bin/env python
+# !/usr/bin/env python
 
 # Copyright 2018 Google LLC
 #
@@ -15,28 +15,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# hyperparam.yaml
-trainingInput:
-  hyperparameters:
-    goal: MAXIMIZE
-    maxTrials: 4
-    maxParallelTrials: 2
-    hyperparameterMetricTag: rmseORmlogloss
-    enableTrialEarlyStopping: TRUE 
-    params:
-    - parameterName: max_depth
-      type: INTEGER
-      minValue: 5
-      maxValue: 10
-    - parameterName: num_boost_round
-      type: INTEGER
-      minValue: 50
-      maxValue: 100
-    - parameterName: booster
-      type: CATEGORICAL
-      categoricalValues: [
-          "gbtree",
-          "gblinear",
-          "dart"
-      ]
+from setuptools import find_packages
+from setuptools import setup
 
+REQUIRED_PACKAGES = ['cloudml-hypertune']
+
+setup(
+    name='lending_club_hp_tuning',
+    version='0.1',
+    install_requires=REQUIRED_PACKAGES,
+    packages=find_packages(),
+    include_package_data=True,
+    description='Lending Club HP tuning training application'
+)
