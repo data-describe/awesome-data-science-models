@@ -15,7 +15,7 @@ They all use [data⎰describe](https://github.com/data-describe/data-describe) o
 | 203 | Black Friday | Recommending product categories   with multi-class categorization in AI Platform with custom prediction   routines, custom hyperparameter tuning | Data Scientists, Data Engineers |
 | 302 | Cellular Imaging | Recursion Cellular Image   Classification with AI-Platform with TF2, TPU, and advanced Engineering | Data Scientists, Data Engineers,   HCLS |
 | 401 | NASA IOT Signal processing  | Processing Streaming data with signal windowing and live prediction using AI Platform and GCP | MLOps, Advanced Data Scientists |
-|  | Bearing Condition Monitoring | Analyzing the Vibrations and Motor current of Bearings to predict Remaining Useful LifeCycle (RUL) using Vertex AI | Data Scientist, Data Engineers |
+| 402 | Bearing Condition Monitoring | Analyzing the Vibrations and Motor current of Bearings to predict Remaining Useful LifeCycle (RUL) using Vertex AI | Data Scientist, Data Engineers |
 
 ## install instructions
 
